@@ -20,7 +20,7 @@ cursor-rules/
 ### Step 1: Install (optional)
 
 ```bash
-npm install cursor-rules
+npm install @avisek_yorkie/cursor-rules
 ```
 
 ### Step 2: Copy Rules to Your Project
@@ -28,9 +28,9 @@ npm install cursor-rules
 Copy the `.cursorrules` file and all rule files from `rules/` to your project root:
 
 ```bash
-# From your project root (after npm install cursor-rules)
-cp node_modules/cursor-rules/.cursorrules .
-cp node_modules/cursor-rules/rules/*.mdc .
+# From your project root (after npm install @avisek_yorkie/cursor-rules)
+cp node_modules/@avisek_yorkie/cursor-rules/.cursorrules .
+cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
 ```
 
 Or from a local clone:
@@ -125,8 +125,8 @@ mkdir my-new-project
 cd my-new-project
 
 # Copy cursor rules
-cp node_modules/cursor-rules/.cursorrules .
-cp node_modules/cursor-rules/rules/*.mdc .
+cp node_modules/@avisek_yorkie/cursor-rules/.cursorrules .
+cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
 
 # Initialize your project (npm, pip, etc.)
 npm init -y  # or your package manager
@@ -141,8 +141,8 @@ npm init -y  # or your package manager
 cd /path/to/your/project
 
 # Copy rules (backup existing .cursorrules if present)
-cp node_modules/cursor-rules/.cursorrules .
-cp node_modules/cursor-rules/rules/*.mdc .
+cp node_modules/@avisek_yorkie/cursor-rules/.cursorrules .
+cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
 
 # Review and merge with existing rules if needed
 ```

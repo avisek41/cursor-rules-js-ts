@@ -55,10 +55,10 @@
 
 ### For New Projects
 ```bash
-# 1. Install (optional): npm install cursor-rules
+# 1. Install (optional): npm install @avisek_yorkie/cursor-rules
 # 2. Copy rules to your project root
-cp node_modules/cursor-rules/.cursorrules .
-cp node_modules/cursor-rules/rules/*.mdc .
+cp node_modules/@avisek_yorkie/cursor-rules/.cursorrules .
+cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
 
 # 3. Start coding - rules are automatically applied!
 ```
@@ -69,8 +69,8 @@ cp node_modules/cursor-rules/rules/*.mdc .
 cp .cursorrules .cursorrules.backup
 
 # 2. Copy new rules
-cp node_modules/cursor-rules/.cursorrules .
-cp node_modules/cursor-rules/rules/*.mdc .
+cp node_modules/@avisek_yorkie/cursor-rules/.cursorrules .
+cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
 
 # 3. Merge with existing rules if needed
 ```
@@ -175,7 +175,7 @@ These rules work with:
 
 ---
 
-**Package**: `cursor-rules` (npm) · **Structure**: `rules/` contains the `.mdc` rule files
+**Package**: `@avisek_yorkie/cursor-rules` (npm) · **Structure**: `rules/` contains the `.mdc` rule files
 
 **Status**: ✅ Ready to use
 
