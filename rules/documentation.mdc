@@ -1,0 +1,411 @@
+# Documentation Standards - JavaScript/TypeScript
+
+Good documentation is as important as good code. These standards apply to JS/TS projects.
+
+---
+
+## Core Documentation Principles
+
+### Why Document?
+- **For Future You** - You'll forget why you made decisions
+- **For Your Team** - Others need to understand your code
+- **For New Developers** - Reduce onboarding time
+- **For Users** - If you build an API or library
+
+### What to Document
+✅ **DO Document:**
+- WHY decisions were made
+- Complex algorithms and logic
+- Public APIs and interfaces
+- Setup and installation steps
+- Architecture and design decisions
+- Known limitations and gotchas
+- Examples of usage
+
+❌ **DON'T Document:**
+- Obvious code (let code self-document)
+- Implementation details that might change
+- What the code does (code shows this)
+
+### General Rules
+- Write self-documenting code as the primary documentation
+- Keep documentation close to the code it describes
+- Update documentation when code changes
+- Remove outdated or incorrect documentation
+
+---
+
+## README.md - Every Project Needs One
+
+### Essential Sections
+
+```markdown
+# Project Name
+
+Brief description of what this project does (1-2 sentences).
+
+## Table of Contents
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Features
+- Feature 1
+- Feature 2
+- Feature 3
+
+## Prerequisites
+- Node.js 18+
+- (Add: database, API keys, etc.)
+
+## Installation
+
+\`\`\`bash
+git clone https://github.com/org/project.git
+cd project
+npm install
+cp .env.example .env
+# Edit .env with your configuration
+npm run dev
+\`\`\`
+
+## Usage
+
+### Basic Example
+\`\`\`javascript
+const result = doSomething();
+\`\`\`
+
+### Advanced Example
+\`\`\`javascript
+const advancedResult = doSomethingComplex({
+  option1: 'value',
+  option2: 123
+});
+\`\`\`
+
+## Configuration
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| API_URL | API endpoint | http://localhost:3000 |
+| DB_HOST | Database host | localhost |
+
+## Testing
+
+\`\`\`bash
+npm test
+npm run test:integration
+npm run test:e2e
+\`\`\`
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md)
+
+## License
+
+MIT - See [LICENSE](LICENSE)
+```
+
+### README Best Practices
+- ✅ Keep it concise but complete
+- ✅ Include code examples (JavaScript/TypeScript)
+- ✅ Update when features change
+- ✅ Add badges (build status, coverage) when applicable
+- ❌ Don't duplicate full API docs (link to them)
+- ❌ Don't include outdated information
+
+### Optional but Recommended
+- **Architecture Overview** - High-level system design
+- **Troubleshooting** - Common issues and solutions
+- **Changelog** - Link to CHANGELOG.md or version history
+- **Roadmap** - Future plans and features
+
+---
+
+## Code Comments
+
+### When to Comment
+
+```javascript
+// ✅ GOOD - Explains WHY and complex logic
+// Use exponential backoff to avoid overwhelming the API
+// during rate limit periods. Max wait time is 32 seconds.
+const backoffDelay = Math.min(Math.pow(2, retryCount) * 1000, 32000);
+
+// ✅ GOOD - Documents non-obvious behavior
+// Note: This must run before initializeDatabase() due to
+// connection pool limitations in PostgreSQL
+await setupConnectionPool();
+
+// ✅ GOOD - Explains workaround
+// HACK: Force repaint to fix Safari rendering bug
+// See: https://bugs.webkit.org/show_bug.cgi?id=123456
+element.style.display = 'none';
+element.offsetHeight; // Force reflow
+element.style.display = 'block';
+
+// ❌ BAD - States the obvious
+// Set count to zero
+const count = 0;
+
+// ❌ BAD - Redundant comment
+// Loop through users
+for (const user of users) {
+  // ...
+}
+```
+
+### TODO Comments
+
+```javascript
+// ✅ GOOD - TODO with context
+// TODO(PROJ-123): Refactor this to use new caching system
+// Current implementation has O(n²) complexity
+function slowSearch(items, query) {
+  // ...
+}
+
+// ❌ BAD - TODO without context
+// TODO: Fix this
+function doSomething() {
+  // ...
+}
+```
+
+### Comment Formatting
+- **Single-line:** `// Comment text`
+- **Multi-line:** Use `/* ... */` or multiple `//` lines; for JSDoc use `/** ... */`
+
+### Inline Comment Guidelines
+- Explain "why", not "what"
+- Document non-obvious code behavior
+- Include references to issues or external docs (e.g. MDN, GitHub issues)
+- Use TODO comments sparingly and always with context/ticket
+
+---
+
+## Function/Method Documentation (JSDoc)
+
+### Document Public APIs
+Document every public and exported function. Use JSDoc for JavaScript; TypeScript can use JSDoc or TSDoc.
+
+```javascript
+/**
+ * Calculate the total price including tax and discounts.
+ *
+ * @param {number} basePrice - The base price before tax
+ * @param {number} taxRate - Tax rate as decimal (e.g., 0.08 for 8%)
+ * @param {Object} options - Additional options
+ * @param {number} options.discount - Discount percentage (0-100)
+ * @param {string} options.currency - Currency code (default: 'USD')
+ * @returns {number} Total price after tax and discount
+ * @throws {Error} If basePrice is negative
+ *
+ * @example
+ * // Calculate price with 8% tax and 10% discount
+ * const total = calculateTotal(100, 0.08, { discount: 10 });
+ * // Returns: 97.2
+ */
+function calculateTotal(basePrice, taxRate, options = {}) {
+  if (basePrice < 0) {
+    throw new Error('Base price cannot be negative');
+  }
+
+  const { discount = 0, currency = 'USD' } = options;
+  const discountedPrice = basePrice * (1 - discount / 100);
+  return discountedPrice * (1 + taxRate);
+}
+```
+
+### With TypeScript Types
+
+```typescript
+/**
+ * Fetches a user by ID from the API.
+ *
+ * @param userId - Unique user identifier
+ * @returns The user object or null if not found
+ * @throws {ApiError} When the API request fails
+ *
+ * @example
+ * const user = await getUserById('usr_123');
+ */
+async function getUserById(userId: string): Promise<User | null> {
+  // implementation
+}
+```
+
+### Documentation Elements to Include
+- ✅ Brief description of what the function does
+- ✅ Parameters with types and descriptions
+- ✅ Return value and type
+- ✅ Exceptions/errors it might throw
+- ✅ Usage examples for non-trivial functions
+- ❌ Implementation details
+- ❌ Private helper functions (unless complex and non-obvious)
+
+### Class/Module Documentation
+- Document the purpose and responsibility of each class/module
+- Document public properties and methods with JSDoc
+- Include usage examples for complex classes
+- Document dependencies and requirements (e.g. peer dependencies)
+
+---
+
+## API Documentation
+
+### REST Endpoints
+Document each endpoint with:
+- HTTP method and path
+- Request parameters (query, path, body)
+- Request body schema (e.g. JSON)
+- Response schema and status codes
+- Authentication/authorization requirements
+- Example requests and responses
+- Error responses and status codes
+
+### Tools and Standards
+- Use **OpenAPI (Swagger)** for REST APIs
+- Keep API documentation in sync with code (generate from code or keep specs in version control)
+- Include versioning (e.g. `/v1/users`) and document in README or dedicated API doc
+
+---
+
+## Architecture Documentation
+
+### ADR (Architecture Decision Records)
+Document significant decisions in `/docs/adr/` (e.g. `001-postgres-as-primary-db.md`):
+
+```markdown
+# ADR-001: Use PostgreSQL for Primary Database
+
+## Status
+Accepted
+
+## Context
+We need a reliable database for storing user data, transactions,
+and analytics. Key requirements:
+- ACID compliance
+- Complex query support
+- Horizontal scalability
+- Strong community support
+
+## Decision
+Use PostgreSQL as our primary database.
+
+## Consequences
+
+### Positive
+- Strong ACID guarantees
+- Excellent JSON support for flexible schemas
+- Mature ecosystem and tooling
+- Great performance for complex queries
+
+### Negative
+- More complex to scale horizontally than MongoDB
+- Requires schema migrations
+- Steeper learning curve than simpler databases
+
+## Alternatives Considered
+- MongoDB: Too flexible, less data integrity
+- MySQL: Weaker JSON support, less feature-rich
+- DynamoDB: Vendor lock-in, complex pricing
+```
+
+### System Architecture Diagrams
+Use ASCII or link to diagrams (Mermaid, draw.io, etc.) in markdown:
+
+```markdown
+## System Architecture
+
+\`\`\`
+┌─────────────┐      ┌──────────────┐      ┌──────────────┐
+│   Client    │─────▶│ API Gateway  │─────▶│   Auth Svc   │
+└─────────────┘      └──────────────┘      └──────────────┘
+                             │
+                             ▼
+                      ┌──────────────┐
+                      │   User Svc    │
+                      └──────────────┘
+                             │
+                             ▼
+                      ┌──────────────┐
+                      │  PostgreSQL  │
+                      └──────────────┘
+\`\`\`
+```
+
+### What to Document
+- System architecture and design decisions
+- Component interactions and data flow
+- Deployment architecture
+- Technology choices and trade-offs
+
+---
+
+## Change Documentation
+
+- Document breaking changes prominently (README, CHANGELOG, release notes)
+- Maintain a **CHANGELOG.md** (e.g. Keep a Changelog format)
+- Use **semantic versioning** (MAJOR.MINOR.PATCH)
+- Document migration guides for major changes
+- Include deprecation notices with timelines and alternatives
+
+---
+
+## Code Examples in Documentation
+
+- Include working JavaScript/TypeScript examples
+- Keep examples simple and focused
+- Show common use cases and optional configuration
+- Include error handling where relevant
+- Ensure examples run (e.g. via tests or manual verification)
+
+---
+
+## Documentation Maintenance
+
+- Review documentation during code reviews
+- Update documentation as part of the development process
+- Remove outdated documentation
+- Keep documentation in version control
+- Use tools (e.g. TypeDoc, ESLint JSDoc rules) to check completeness
+
+---
+
+## Documentation Tools (JS/TS)
+
+- **JSDoc** - Inline API docs for JavaScript
+- **TypeDoc** - Generate docs from TypeScript
+- **API docs** - OpenAPI/Swagger for REST APIs
+- **Storybook** - Component documentation for UI libraries (React, Vue, etc.)
+
+---
+
+## Documentation Review Checklist
+
+- [ ] All public APIs and exported functions are documented (JSDoc)
+- [ ] README is complete and up-to-date
+- [ ] Code examples are correct and use JS/TS
+- [ ] Installation and prerequisites are accurate
+- [ ] API documentation matches implementation
+- [ ] Breaking changes and CHANGELOG are updated
+- [ ] No outdated or incorrect information
+- [ ] Architecture/ADR docs exist for major decisions
+
+---
+
+## Documentation Best Practices
+
+- Write for your audience (developers, users, contributors)
+- Use clear, concise language
+- Include diagrams where helpful
+- Keep documentation organized and navigable (e.g. Table of Contents)
+- Use consistent formatting and style
+- Link related documentation
+- Keep documentation in the repo and up to date

@@ -1,0 +1,25 @@
+{
+  "name": "cursor-rules",
+  "version": "1.0.0",
+  "description": "Cursor AI rules for code quality, documentation, and naming conventions (JS/TS)",
+  "keywords": [
+    "cursor",
+    "cursor-rules",
+    "code-quality",
+    "documentation",
+    "naming-conventions",
+    "javascript",
+    "typescript"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/avisek41/cursor-rules-js-ts.git"
+  },
+  "files": [
+    "rules",
+    "README.md",
+    "SETUP.md",
+    ".cursorrules"
+  ]
+}

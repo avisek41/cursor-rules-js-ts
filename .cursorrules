@@ -1,0 +1,153 @@
+# Cursor Rules - Generic Tech Stack
+
+This file contains comprehensive coding rules that apply to any technology stack. These rules are designed to ensure code quality, maintainability, and consistency across all projects.
+
+## How to Use These Rules
+
+1. Copy this `.cursorrules` file to your project root
+2. Copy the rule files from the `rules/` folder (code-quality.mdc, documentation.mdc, naming-conventions.mdc) to your project root
+3. Cursor will automatically apply these rules when assisting with code
+
+## Rule Categories
+
+### 1. Code Quality (rules/code-quality.mdc)
+- Clean code standards
+- Error handling
+- Security best practices
+- Performance considerations
+- Code complexity management
+- Testing requirements
+
+### 2. Documentation (rules/documentation.mdc)
+- Code documentation standards
+- README requirements
+- API documentation
+- Architecture documentation
+- Inline comments guidelines
+
+### 3. Naming Conventions (rules/naming-conventions.mdc)
+- Variable and function naming
+- Class and type naming
+- File and directory naming
+- Language-specific conventions
+- Database and API naming
+
+## Core Principles
+
+### Code Quality
+- Write self-documenting code
+- Keep functions small and focused (20-30 lines ideal)
+- Handle errors explicitly
+- Validate all inputs
+- Follow security best practices
+- Maintain low complexity
+- Write comprehensive tests
+
+### Documentation
+- Document all public APIs
+- Keep README files comprehensive and up-to-date
+- Use appropriate documentation tools
+- Include code examples
+- Maintain changelogs
+
+### Naming
+- Use descriptive names that reveal intent
+- Follow language-specific conventions
+- Be consistent throughout the codebase
+- Avoid abbreviations and generic names
+- Use appropriate prefixes for booleans
+
+## Language-Specific Guidelines
+
+### JavaScript/TypeScript
+- Use `const` over `let`, avoid `var`
+- Use `===` instead of `==`
+- Prefer async/await over promise chains
+- Use arrow functions for callbacks
+- Follow camelCase for variables/functions
+- Use PascalCase for classes/interfaces
+
+### Python
+- Follow PEP 8 style guide
+- Use snake_case for variables/functions
+- Use PascalCase for classes
+- Use type hints where applicable
+- Follow the Zen of Python
+
+### Java
+- Follow Java naming conventions
+- Use camelCase for variables/methods
+- Use PascalCase for classes
+- Handle checked exceptions appropriately
+- Prefer composition over inheritance
+
+### Go
+- Follow Go naming conventions
+- Handle all errors explicitly
+- Use interfaces for abstraction
+- Keep functions small and focused
+- Export only what's necessary
+
+## Code Review Checklist
+
+Before submitting code, ensure:
+- [ ] Code follows all naming conventions
+- [ ] All public APIs are documented
+- [ ] Error handling is appropriate
+- [ ] Input validation is present
+- [ ] No security vulnerabilities
+- [ ] No hardcoded values
+- [ ] Functions are small and focused
+- [ ] Tests are included and passing
+- [ ] No unused imports or dead code
+- [ ] README is updated if needed
+
+## Quick Reference
+
+### Function/Method Guidelines
+- Maximum length: 50 lines (ideally 20-30)
+- Single responsibility
+- Clear, descriptive names
+- Proper error handling
+- Input validation
+
+### Variable Naming
+- Descriptive nouns or noun phrases
+- Avoid abbreviations
+- Use appropriate prefixes for booleans (`is`, `has`, `can`)
+- Be specific, not generic
+
+### Documentation
+- Document all public APIs
+- Include parameter and return types
+- Provide usage examples
+- Keep documentation up-to-date
+
+### Security
+- Never hardcode secrets
+- Validate and sanitize inputs
+- Use parameterized queries
+- Keep dependencies updated
+
+## Integration with Projects
+
+To use these rules in a specific project:
+
+1. **Copy the rules**: Copy `.cursorrules` and the `.mdc` files from `rules/` to your project root
+2. **Customize if needed**: Add project-specific rules while maintaining these core principles
+3. **Team alignment**: Ensure your team is aware of and follows these rules
+4. **Code reviews**: Use the checklists during code reviews
+5. **CI/CD**: Consider adding linting rules that enforce these standards
+
+## Maintenance
+
+- Review and update rules periodically
+- Add language-specific rules as needed
+- Keep rules generic and applicable across projects
+- Remove outdated or conflicting rules
+- Document any project-specific exceptions
+
+---
+
+**Note**: These rules are designed to be generic and applicable to any technology stack. Customize them for your specific project needs while maintaining the core principles.
+

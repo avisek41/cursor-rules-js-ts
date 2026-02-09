@@ -1,0 +1,291 @@
+# Naming Conventions
+
+## General Naming Principles
+
+### 1. Core Principles
+- Use descriptive names that reveal intent
+- Avoid abbreviations unless they are widely understood
+- Use consistent naming patterns throughout the codebase
+- Prefer longer, clearer names over short, cryptic ones
+- Use names from the problem domain
+- Avoid misleading names
+
+### 2. Variable Naming
+
+#### General Rules:
+- Use nouns or noun phrases for variables
+- Be specific, not generic (avoid `data`, `info`, `temp`, `value`)
+- Use singular for single items, plural for collections
+- Use meaningful prefixes/suffixes when helpful
+
+#### Good Examples:
+```javascript
+const userEmail = "user@example.com";
+const activeUsers = [];
+const isAuthenticated = true;
+const maxRetryAttempts = 3;
+const customerOrderTotal = 100.50;
+```
+
+#### Bad Examples:
+```javascript
+const data = "user@example.com";
+const arr = [];
+const flag = true;
+const num = 3;
+const temp = 100.50;
+```
+
+### 3. Function/Method Naming
+
+#### General Rules:
+- Use verbs or verb phrases for functions
+- Start with action words: `get`, `set`, `create`, `delete`, `update`, `calculate`, `validate`, `is`, `has`, `can`
+- Be specific about what the function does
+- Use consistent verb prefixes for similar operations
+
+#### Good Examples:
+```javascript
+function getUserById(id) { }
+function calculateTotalPrice(items) { }
+function isValidEmail(email) { }
+function hasPermission(user, permission) { }
+function createUserAccount(userData) { }
+function deleteExpiredSessions() { }
+```
+
+#### Bad Examples:
+```javascript
+function process(data) { }
+function doStuff() { }
+function check(x) { }
+function handle() { }
+function run() { }
+```
+
+### 4. Class/Type Naming
+
+#### General Rules:
+- Use nouns or noun phrases
+- Use PascalCase for class names
+- Be specific and descriptive
+- Avoid generic names like `Manager`, `Handler`, `Processor`
+
+#### Good Examples:
+```javascript
+class UserAccount { }
+class EmailValidator { }
+class PaymentProcessor { }
+class DatabaseConnection { }
+class OrderService { }
+```
+
+#### Bad Examples:
+```javascript
+class Manager { }
+class Handler { }
+class Processor { }
+class Helper { }
+class Utils { }
+```
+
+### 5. Constant Naming
+
+#### General Rules:
+- Use UPPER_SNAKE_CASE for constants
+- Use descriptive names that explain the value
+- Group related constants together
+- Use constants for magic numbers and strings
+
+#### Good Examples:
+```javascript
+const MAX_RETRY_ATTEMPTS = 3;
+const DEFAULT_TIMEOUT_MS = 5000;
+const API_BASE_URL = "https://api.example.com";
+const SUPPORTED_FILE_TYPES = ["jpg", "png", "gif"];
+```
+
+#### Bad Examples:
+```javascript
+const max = 3;
+const timeout = 5000;
+const url = "https://api.example.com";
+const types = ["jpg", "png", "gif"];
+```
+
+### 6. Boolean Naming
+
+#### General Rules:
+- Use prefixes: `is`, `has`, `can`, `should`, `will`, `did`
+- Use positive boolean names (avoid `isNot`, `hasNo`)
+- Be specific about what the boolean represents
+
+#### Good Examples:
+```javascript
+const isAuthenticated = true;
+const hasPermission = false;
+const canEdit = true;
+const shouldRetry = false;
+const isEmpty = true;
+const isActive = false;
+```
+
+#### Bad Examples:
+```javascript
+const authenticated = true; // unclear if it's a boolean
+const permission = false;
+const edit = true;
+const notEmpty = false; // use positive names
+const flag = true;
+```
+
+### 7. File and Directory Naming
+
+#### General Rules:
+- Use kebab-case for file and directory names
+- Use descriptive names that indicate content
+- Match file names to their primary export (if applicable)
+- Use consistent naming patterns across the project
+
+#### Good Examples:
+```
+user-service.ts
+email-validator.js
+payment-processor.ts
+user-account.component.tsx
+api-client.ts
+```
+
+#### Bad Examples:
+```
+service.ts
+validator.js
+processor.ts
+component.tsx
+```
+
+### 8. TypeScript/JavaScript Conventions
+
+- **Variables/Functions**: camelCase
+- **Classes/Interfaces/Types**: PascalCase
+- **Constants**: UPPER_SNAKE_CASE
+- **Files**: kebab-case
+- **Private members**: prefix with underscore `_privateMethod()`
+
+```typescript
+const userName = "John";
+function getUserData() { }
+class UserService { }
+const MAX_RETRIES = 3;
+interface UserAccount { }
+```
+
+### 9. Database Naming
+
+#### Tables:
+- Use plural nouns: `users`, `orders`, `products`
+- Use snake_case: `user_accounts`, `order_items`
+
+#### Columns:
+- Use snake_case: `user_id`, `created_at`, `email_address`
+- Use descriptive names: `first_name` not `fname`
+- Use consistent suffixes: `_id` for foreign keys, `_at` for timestamps
+
+#### Indexes:
+- Use descriptive names: `idx_users_email`, `idx_orders_user_id`
+
+### 10. API Naming
+
+#### REST Endpoints:
+- Use nouns, not verbs: `/users` not `/getUsers`
+- Use plural nouns: `/users` not `/user`
+- Use kebab-case or camelCase consistently
+- Use nested resources: `/users/123/orders`
+- Use query parameters for filtering: `/users?status=active`
+
+#### Good Examples:
+```
+GET /users
+GET /users/123
+POST /users
+PUT /users/123
+DELETE /users/123
+GET /users/123/orders
+GET /users?status=active&limit=10
+```
+
+#### Bad Examples:
+```
+GET /getUsers
+GET /user
+POST /createUser
+GET /userOrders/123
+GET /users?Status=Active
+```
+
+### 11. Configuration Naming
+
+#### Environment Variables:
+- Use UPPER_SNAKE_CASE
+- Use descriptive prefixes: `DB_`, `API_`, `APP_`
+- Be specific about the purpose
+
+#### Good Examples:
+```
+DATABASE_URL
+API_KEY
+APP_ENVIRONMENT
+MAX_CONNECTION_POOL_SIZE
+REDIS_HOST
+```
+
+#### Bad Examples:
+```
+db_url
+apiKey
+env
+max
+redis
+```
+
+### 12. Test Naming
+
+#### Test Functions:
+- Use descriptive names that explain what is being tested
+- Follow pattern: `test_<what>_<condition>_<expected_result>` or `should_<expected_behavior>_when_<condition>`
+
+#### Good Examples:
+```javascript
+test("should return user when valid id is provided")
+test("should throw error when email is invalid")
+test("should calculate total price correctly with tax")
+```
+
+#### Bad Examples:
+```javascript
+test("user test")
+test("test1")
+test("function works")
+```
+
+### 13. Naming Anti-Patterns to Avoid
+
+- **Single letter variables**: Only acceptable in loops (`i`, `j`, `k`) or mathematical contexts
+- **Abbreviations**: Avoid unless universally understood (`id`, `url`, `api`)
+- **Generic names**: `data`, `info`, `temp`, `value`, `obj`, `arr`
+- **Misleading names**: Names that don't match what they do
+- **Hungarian notation**: Avoid type prefixes (`strName`, `intCount`)
+- **Inconsistent casing**: Mixing camelCase and snake_case in the same context
+- **Names that differ only by case**: `user` vs `User` in the same scope
+
+### 14. Naming Review Checklist
+- [ ] Names are descriptive and reveal intent
+- [ ] No abbreviations unless widely understood
+- [ ] Consistent naming patterns throughout
+- [ ] Boolean names use appropriate prefixes (`is`, `has`, `can`)
+- [ ] Function names use action verbs
+- [ ] Class names are nouns
+- [ ] Constants are in UPPER_CASE
+- [ ] File names match their content
+- [ ] No misleading or confusing names
+- [ ] Names follow TypeScript/JavaScript conventions

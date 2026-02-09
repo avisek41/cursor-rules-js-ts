@@ -1,0 +1,417 @@
+# Code Quality Standards
+
+These standards apply to the TypeScript/JavaScript ecosystem. Core principles are universal across languages.
+
+---
+
+## Core Principles
+
+### SOLID Principles
+- **S**ingle Responsibility: One class/function does one thing
+- **O**pen/Closed: Open for extension, closed for modification
+- **L**iskov Substitution: Subtypes must be substitutable for their base types
+- **I**nterface Segregation: Many specific interfaces > one general interface
+- **D**ependency Inversion: Depend on abstractions, not concretions
+
+### DRY (Don't Repeat Yourself)
+- ✅ Extract repeated logic into reusable functions/classes
+- ✅ Use configuration over duplication
+- ❌ Never copy-paste code without refactoring
+
+### KISS (Keep It Simple, Stupid)
+- ✅ Simple solution > clever solution
+- ✅ Readable code > clever code
+- ❌ Avoid premature optimization
+- ❌ Don't over-engineer
+
+### YAGNI (You Aren't Gonna Need It)
+- ✅ Build what you need now
+- ❌ Don't build for hypothetical future requirements
+- ❌ Remove unused code immediately
+
+---
+
+## Code Structure
+
+### Function/Method Length
+- **Maximum 50 lines** per function/method (ideally 20-30)
+- If longer, break into smaller functions
+- Each function should do ONE thing
+
+### File Length
+- **Maximum 300-500 lines** per file
+- If longer, split into multiple files
+- Group related functionality
+
+### Code Organization
+- Separate concerns: business logic, data access, presentation, utilities
+- Use consistent file and folder structure
+- Keep imports organized: external libraries first, then internal modules
+- Remove unused imports, variables, and code
+
+### Nesting Depth
+- **Maximum 3 levels** of nesting
+- Use early returns to reduce nesting
+- Extract nested logic into separate functions
+
+```javascript
+// ✅ Good - Early return
+function processUser(user) {
+  if (!user) return null;
+  if (!user.active) return null;
+
+  return processActiveUser(user);
+}
+
+// ❌ Bad - Deep nesting
+function processUser(user) {
+  if (user) {
+    if (user.active) {
+      if (user.hasPermission) {
+        // deeply nested logic
+      }
+    }
+  }
+}
+```
+
+### Cyclomatic Complexity
+- **Maximum complexity of 10** per function
+- Reduce complexity by: breaking into smaller functions, using early returns, extracting conditional logic
+
+---
+
+## Naming Conventions
+
+See `naming-conventions.mdc` for full details. Summary:
+
+### General Rules
+- ✅ Use descriptive, meaningful names that reveal intent
+- ❌ Avoid abbreviations (unless universal like `id`, `url`, `http`)
+- ❌ No single-letter variables (except loop counters `i`, `j`, `k`)
+
+### Functions/Methods
+- Use verbs: `getUserData()`, `calculateTotal()`, `validateEmail()`
+- Boolean functions: `isActive()`, `hasPermission()`, `canEdit()`
+
+### Variables
+- Use nouns: `userData`, `totalPrice`, `emailAddress`
+- Boolean variables: `isActive`, `hasPermission`, `canEdit`
+
+### Constants
+- Use UPPERCASE_WITH_UNDERSCORES: `MAX_RETRY_ATTEMPTS`, `API_BASE_URL`
+
+```javascript
+// ✅ Good Names
+const userAge = 25;
+const isAdult = userAge >= 18;
+function calculateTotalPrice(items) { }
+function validateEmailAddress(email) { }
+
+// ❌ Bad Names
+const x = 25;
+const flag = true;
+function calc(i) { }
+function do() { }
+```
+
+---
+
+## Comments
+
+### When to Comment
+- ✅ WHY something is done (not WHAT)
+- ✅ Complex algorithms that need explanation
+- ✅ Workarounds or non-obvious solutions
+- ✅ TODOs with ticket references
+
+### When NOT to Comment
+- ❌ Obvious code (code should be self-documenting)
+- ❌ Redundant comments that repeat the code
+- ❌ Commented-out code (delete it; it's in git history)
+
+```javascript
+// ✅ Good Comment - Explains WHY
+// Retry 3 times to handle transient network failures
+// as recommended by the API provider
+const MAX_RETRIES = 3;
+
+// ❌ Bad Comment - States the obvious
+// Set the count to zero
+const count = 0;
+```
+
+---
+
+## Error Handling
+
+### Never Fail Silently
+
+```javascript
+// ❌ Bad - Swallows errors
+try {
+  riskyOperation();
+} catch (error) {
+  // Silent failure
+}
+
+// ✅ Good - Handles errors
+try {
+  riskyOperation();
+} catch (error) {
+  logger.error('Failed to execute risky operation', error);
+  notifyErrorTracking(error);
+  showUserFriendlyError();
+}
+```
+
+### Fail Fast
+- ✅ Validate inputs early at function boundaries
+- ✅ Throw errors immediately when something is wrong
+- ❌ Don't let invalid data propagate through the system
+
+### Specific Error Messages
+
+```javascript
+// ❌ Bad - Generic error
+throw new Error('Error occurred');
+
+// ✅ Good - Specific error
+throw new Error('User with ID 123 not found in database');
+```
+
+### General Rules
+- Use appropriate error types for different scenarios
+- Log errors with context (no sensitive data)
+- Use try-catch where exceptions can occur
+
+---
+
+## Input Validation
+- Validate all inputs at function boundaries
+- Check for null/undefined/empty values
+- Validate data types and ranges
+- Sanitize user inputs to prevent injection attacks
+- Return clear validation error messages
+
+---
+
+## Code Duplication
+
+### The Rule of Three
+1. First time: Write it
+2. Second time: Copy it (reluctantly)
+3. Third time: Refactor it into a reusable function
+
+### Extract Common Logic
+
+```javascript
+// ❌ Bad - Duplicated validation
+function createUser(data) {
+  if (!data.email || !data.email.includes('@')) {
+    throw new Error('Invalid email');
+  }
+  // create user
+}
+
+function updateUser(data) {
+  if (!data.email || !data.email.includes('@')) {
+    throw new Error('Invalid email');
+  }
+  // update user
+}
+
+// ✅ Good - Extracted validation
+function validateEmail(email) {
+  if (!email || !email.includes('@')) {
+    throw new Error('Invalid email');
+  }
+}
+
+function createUser(data) {
+  validateEmail(data.email);
+  // create user
+}
+
+function updateUser(data) {
+  validateEmail(data.email);
+  // update user
+}
+```
+
+---
+
+## Magic Numbers and Strings
+
+### Never Use Magic Values
+
+```javascript
+// ❌ Bad - Magic numbers
+if (user.age > 18) { }
+setTimeout(callback, 5000);
+
+// ✅ Good - Named constants
+const ADULT_AGE = 18;
+const TIMEOUT_MS = 5000;
+
+if (user.age > ADULT_AGE) { }
+setTimeout(callback, TIMEOUT_MS);
+```
+
+- Replace magic strings with constants or enums
+- Use configuration for environment-specific values
+- Group related constants together
+
+---
+
+## Function Parameters
+
+### Maximum 3-4 Parameters
+- If more parameters needed, use a configuration object
+
+```javascript
+// ❌ Bad - Too many parameters
+function createUser(name, email, age, address, phone, role, department) {
+  // ...
+}
+
+// ✅ Good - Configuration object
+function createUser(config) {
+  const { name, email, age, address, phone, role, department } = config;
+  // ...
+}
+
+createUser({
+  name: 'John Doe',
+  email: 'john@example.com',
+  age: 30,
+  // ...
+});
+```
+
+---
+
+## Code Smells to Avoid
+
+| Smell | Rule | Solution |
+|-------|------|----------|
+| **Long Parameter Lists** | More than 4 parameters | Use configuration object |
+| **Large Classes/Files** | More than 500 lines | Split into smaller modules |
+| **Feature Envy** | Function accessing another's data more than its own | Move logic to where the data lives |
+| **Data Clumps** | Same group of variables appearing together | Create a class/object to group them |
+| **Divergent Change** | One class changed for different reasons | Split into separate classes |
+| **Shotgun Surgery** | One change requires modifying many classes | Consolidate related changes into one place |
+
+---
+
+## Security Best Practices
+- Never hardcode secrets, API keys, or credentials
+- Use environment variables for configuration
+- Validate and sanitize all user inputs
+- Use parameterized queries to prevent SQL injection
+- Implement proper authentication and authorization
+- Follow principle of least privilege
+- Keep dependencies updated to avoid vulnerabilities
+
+---
+
+## Testing
+
+### Write Testable Code
+- ✅ Small, focused functions
+- ✅ Inject dependencies (don't hardcode)
+- ✅ Avoid global state
+- ✅ Pure functions when possible
+
+### Test Coverage
+- ✅ Aim for 80%+ code coverage
+- ✅ Focus on business logic
+- ✅ Test edge cases and error paths
+- ✅ Include unit tests, integration tests
+- Keep tests simple and focused
+
+---
+
+## Performance
+
+### Premature Optimization is Bad
+- ✅ Write clean, readable code first
+- ✅ Optimize only when you have performance metrics
+- ❌ Don't sacrifice readability for minor performance gains
+
+### When to Optimize
+- After profiling identifies bottlenecks
+- When performance impacts user experience
+- When costs (server, bandwidth) are high
+
+### General
+- Use efficient algorithms and data structures
+- Minimize database queries and API calls
+- Cache appropriately when beneficial
+- Avoid unnecessary computations in loops
+- Use lazy loading when appropriate
+
+---
+
+## Refactoring Guidelines
+- Refactor when code smells are detected
+- Improve code incrementally
+- Don't refactor and add features in the same commit
+- Ensure tests pass before and after refactoring
+- Refactor in small, safe steps
+
+---
+
+## Code Metrics to Monitor
+- Cyclomatic complexity
+- Code duplication percentage
+- Test coverage percentage
+- Number of dependencies
+- File and function size
+- Technical debt indicators
+
+---
+
+## Code Review Checklist
+
+Before submitting code for review, verify:
+
+- [ ] Code follows naming conventions
+- [ ] No duplicated code
+- [ ] Functions are small and focused
+- [ ] No magic numbers or strings
+- [ ] Errors are handled properly (never fail silently)
+- [ ] Code is self-documenting
+- [ ] Comments explain WHY, not WHAT
+- [ ] Tests are included and passing
+- [ ] No commented-out code
+- [ ] No stray console.log (use proper logging)
+- [ ] No hardcoded values (use constants/config)
+- [ ] Input validation is present at boundaries
+- [ ] No security vulnerabilities
+- [ ] No unused imports or dead code
+
+---
+
+## JavaScript/TypeScript Guidelines
+- Use strict mode
+- Prefer `const` over `let`, avoid `var`
+- Use arrow functions for callbacks
+- Avoid `==`, always use `===`
+- Use async/await over promise chains
+- Handle promise rejections properly
+
+---
+
+## Summary: The Golden Rules
+
+1. **Readability > Cleverness** - Code is read 10x more than written
+2. **Simple > Complex** - The simplest solution is usually the best
+3. **DRY** - Don't Repeat Yourself
+4. **YAGNI** - You Aren't Gonna Need It
+5. **Fail Fast** - Validate early, fail loudly
+6. **Test Your Code** - If you can't test it, refactor it
+7. **Small Functions** - One function, one responsibility
+8. **Meaningful Names** - Names should reveal intent
+9. **Handle Errors** - Never fail silently
+10. **Delete Code** - Dead code should be removed, not commented out
