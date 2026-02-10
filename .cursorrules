@@ -1,18 +1,24 @@
-# Cursor Rules - Generic Tech Stack
+# Cursor Rules - TypeScript/JavaScript
 
-This file contains comprehensive coding rules that apply to any technology stack. These rules are designed to ensure code quality, maintainability, and consistency across all projects.
+Comprehensive rules for **TS/JS** projects: **React**, **Angular**, **Node.js**, **React Native**. Code quality, maintainability, consistency, and AI-assisted development workflow.
 
 ## How to Use These Rules
 
 1. Copy this `.cursorrules` file to your project root
-2. Copy the rule files into `.cursor/rules/` (code-quality.mdc, documentation.mdc, naming-conventions.mdc)
+2. Copy the rule files into `.cursor/rules/` (see Rule Categories below)
 3. Cursor will automatically apply these rules when assisting with code
 
 ## Rule Categories
 
 Rules in `.cursor/rules/` are applied automatically.
 
-### 1. Code Quality (.cursor/rules/code-quality.mdc)
+### 1. AI-Assisted Development (.cursor/rules/ai-assisted-development.mdc)
+- Plan before coding; implement in small, reviewable steps
+- Validate structure first for new features (skeleton then logic)
+- Re-plan when something feels off; don’t refactor legacy out of scope
+- Review checklist: layer, naming, i18n, no hardcoded values, types, a11y
+
+### 2. Code Quality (.cursor/rules/code-quality.mdc)
 - Clean code standards
 - Error handling
 - Security best practices
@@ -20,14 +26,14 @@ Rules in `.cursor/rules/` are applied automatically.
 - Code complexity management
 - Testing requirements
 
-### 2. Documentation (.cursor/rules/documentation.mdc)
+### 3. Documentation (.cursor/rules/documentation.mdc)
 - Code documentation standards
 - README requirements
 - API documentation
 - Architecture documentation
 - Inline comments guidelines
 
-### 3. Naming Conventions (.cursor/rules/naming-conventions.mdc)
+### 4. Naming Conventions (.cursor/rules/naming-conventions.mdc)
 - Variable and function naming
 - Class and type naming
 - File and directory naming
@@ -106,6 +112,9 @@ Before submitting code, ensure:
 
 ## Quick Reference
 
+### AI-Assisted Development (one-line takeaway)
+- **Align on a plan first, then implement in small, reviewable steps**—minimizes rework and keeps code clean and maintainable.
+
 ### Function/Method Guidelines
 - Maximum length: 50 lines (ideally 20-30)
 - Single responsibility
@@ -151,5 +160,5 @@ To use these rules in a specific project:
 
 ---
 
-**Note**: These rules are designed to be generic and applicable to any technology stack. Customize them for your specific project needs while maintaining the core principles.
+**Note**: These rules target TypeScript/JavaScript (React, Angular, Node.js, React Native). Customize for your project while keeping the core principles.
 

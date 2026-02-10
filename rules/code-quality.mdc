@@ -34,6 +34,21 @@ These standards apply to the TypeScript/JavaScript ecosystem. Core principles ar
 - ❌ Don't build for hypothetical future requirements
 - ❌ Remove unused code immediately
 
+### Additional JS/TS Ecosystem Principles
+
+| Principle | Meaning |
+|-----------|--------|
+| **Composition over inheritance** | Prefer composing small modules/hooks over deep class hierarchies. Especially in React: hooks and components over inheritance. |
+| **Immutability** | Prefer `const`; avoid mutating objects/arrays—use spread, `map`/`filter`/`reduce`, immutable updates. Critical for React state and predictability. |
+| **Explicit over implicit** | No magic: clear types (avoid `any`), explicit params and return types, obvious control flow. APIs should be self-evident. |
+| **Pure functions when possible** | Same inputs → same output; no hidden side effects. Makes code testable and predictable. Isolate I/O at boundaries. |
+| **Single source of truth** | One canonical place for each piece of state (e.g. server state, UI state). Avoid syncing duplicate state. |
+| **Declarative over imperative** | Describe *what* you want (e.g. JSX, declarative UI) rather than step-by-step *how*. Prefer `map` over manual loops when it reads better. |
+| **Principle of least surprise** | APIs and behavior should match what a reasonable developer would expect. Naming and signatures should not surprise. |
+| **Colocate / locality** | Keep related code together: component + styles + tests; route + handler + types. Reduces jumping between files. |
+| **Encapsulation** | Don’t leak implementation details from modules/APIs. Expose a small, stable surface; hide the rest. |
+| **Strict TypeScript** | Use `strict: true`; avoid `any`; prefer `unknown` and type guards when type is uncertain. Types are documentation. |
+
 ---
 
 ## Code Structure
@@ -420,3 +435,6 @@ Before submitting code for review, verify:
 8. **Meaningful Names** - Names should reveal intent
 9. **Handle Errors** - Never fail silently
 10. **Delete Code** - Dead code should be removed, not commented out
+11. **Composition over Inheritance** - Compose small pieces; avoid deep hierarchies (especially in React)
+12. **Immutability** - Prefer `const` and immutable updates; avoid hidden mutation
+13. **Explicit over Implicit** - Clear types and APIs; no magic; avoid `any`

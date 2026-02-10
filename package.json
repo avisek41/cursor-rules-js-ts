@@ -1,15 +1,20 @@
 {
   "name": "@avisek_yorkie/cursor-rules",
-  "version": "1.0.2",
-  "description": "Cursor AI rules for code quality, documentation, and naming conventions (JS/TS)",
+  "version": "1.0.3",
+  "description": "Cursor AI rules for TS/JS (React, Angular, Node, React Native): code quality, docs, naming, AI-assisted development.",
   "keywords": [
     "cursor",
     "cursor-rules",
     "code-quality",
     "documentation",
     "naming-conventions",
+    "ai-assisted-development",
     "javascript",
-    "typescript"
+    "typescript",
+    "react",
+    "angular",
+    "node",
+    "react-native"
   ],
   "license": "MIT",
   "repository": {

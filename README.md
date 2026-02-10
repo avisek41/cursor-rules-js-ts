@@ -101,8 +101,73 @@ Cursor will automatically detect and use the `.cursorrules` file in your project
 
 You can customize these rules for your specific project by:
 - Adding project-specific rules to `.cursorrules`
-- Modifying the `.mdc` files to include team-specific conventions
-- Adding language-specific rules for your tech stack
+- **Adding new `.mdc` files in `.cursor/rules/`** (see below — they are automatically linked and applied)
+- Modifying the existing `.mdc` files to include team-specific conventions
+
+## ➕ Adding Project-Specific Rules (Auto-Applied)
+
+**Yes — any `.mdc` file you add inside `.cursor/rules/` is automatically loaded and applied by Cursor.** You don’t need to “link” it anywhere. Cursor scans the `.cursor/rules/` folder and uses every rule file. **You do not need to add the new file to `.cursorrules`**—it is picked up automatically.
+
+### How to add a project-specific rule
+
+1. Create a new file in your project’s `.cursor/rules/` folder, e.g. `project-conventions.mdc` or `react-patterns.mdc`.
+2. Use the same format as the existing rules: YAML frontmatter + markdown content.
+
+**Example: rule that always applies**
+
+```markdown
+---
+description: Our project's React and API conventions
+alwaysApply: true
+---
+
+# Project Conventions
+
+- Use our design system components from `@company/ui`.
+- API base URL from env: `process.env.VITE_API_URL`.
+- All new screens go under `src/screens/`.
+```
+
+**Example: rule that applies only for certain files**
+
+```markdown
+---
+description: React component patterns for this project
+globs: "**/*.tsx"
+alwaysApply: false
+---
+
+# React Patterns
+
+- Functional components only; use hooks for state.
+- Add testID to interactive elements for E2E.
+```
+
+### Frontmatter options
+
+| Field | Meaning |
+|-------|--------|
+| `alwaysApply: true` | Rule is included in every conversation. |
+| `alwaysApply: false` | Rule is included only when relevant (e.g. when matching files are open). |
+| `globs: "**/*.tsx"` | When set, rule is applied when you work with files matching that pattern. |
+
+### Resulting structure (example)
+
+```
+your-project/
+├── .cursorrules
+├── .cursor/
+│   └── rules/
+│       ├── ai-assisted-development.mdc   # from this package
+│       ├── code-quality.mdc               # from this package
+│       ├── documentation.mdc              # from this package
+│       ├── naming-conventions.mdc         # from this package
+│       └── project-conventions.mdc        # your project-specific rule ✅
+├── src/
+└── ...
+```
+
+Package rules and your own rules work together: Cursor applies all of them. Keep package rules as-is and add project-specific ones in the same folder.
 
 ## 📚 Rule Files Overview
 
@@ -158,6 +223,52 @@ Covers:
 - Be consistent throughout codebase
 - Avoid abbreviations and generic names
 - Use appropriate prefixes for booleans
+
+## 📐 Coding Styles & Principles
+
+All rule styles referenced in the code-quality and related rules, in one place.
+
+### Core acronyms
+
+| Style | Full name | Meaning |
+|-------|-----------|----------|
+| **SOLID** | **S**ingle Responsibility, **O**pen/Closed, **L**iskov Substitution, **I**nterface Segregation, **D**ependency Inversion | One thing per class/function; extend without modifying; depend on abstractions. |
+| **DRY** | Don't Repeat Yourself | Extract repeated logic; use configuration over duplication; no copy-paste without refactoring. |
+| **KISS** | Keep It Simple, Stupid | Simple solution > clever; readable > clever; avoid over-engineering. |
+| **YAGNI** | You Aren't Gonna Need It | Build what you need now; don't build for hypotheticals; remove unused code. |
+| **Fail Fast** | — | Validate early at boundaries; fail loudly when something is wrong. |
+
+### Golden rules (summary)
+
+1. **Readability > Cleverness** — Code is read 10× more than written  
+2. **Simple > Complex** — Simplest solution that works  
+3. **Small Functions** — One function, one responsibility (~20–30 lines, max 50)  
+4. **Meaningful Names** — Names should reveal intent  
+5. **Handle Errors** — Never fail silently  
+6. **Delete Code** — Remove dead code; don't just comment it out  
+7. **Test Your Code** — If you can't test it, refactor it  
+8. **Composition over Inheritance** — Compose small pieces; avoid deep hierarchies (especially in React)  
+9. **Immutability** — Prefer `const` and immutable updates; avoid hidden mutation  
+10. **Explicit over Implicit** — Clear types and APIs; no magic; avoid `any`  
+
+### Additional JS/TS principles
+
+| Principle | One-line meaning |
+|-----------|-------------------|
+| **Pure functions when possible** | Same inputs → same output; no hidden side effects; isolate I/O at boundaries. |
+| **Single source of truth** | One canonical place per piece of state; avoid syncing duplicate state. |
+| **Declarative over imperative** | Describe *what* you want (e.g. JSX) over step-by-step *how*. |
+| **Principle of least surprise** | APIs and behavior should match what a reasonable developer would expect. |
+| **Colocate / locality** | Keep related code together (component + styles + tests; route + handler + types). |
+| **Encapsulation** | Don't leak implementation details; expose a small, stable API surface. |
+| **Strict TypeScript** | Use `strict: true`; avoid `any`; prefer `unknown` and type guards when needed. |
+
+### Documentation & naming (from rule files)
+
+- **Document WHY, not WHAT** — Explain decisions and non-obvious logic.  
+- **Names reveal intent** — Descriptive, specific names from the problem domain; avoid `data`, `info`, `handler`, `manager`.  
+- **Verbs for functions** — e.g. `get`, `set`, `create`, `validate`, `is`, `has`, `can`.  
+- **Boolean prefixes** — `is`, `has`, `can` (e.g. `isActive`, `hasPermission`, `canEdit`).
 
 ## 🔧 Customization Guide
 

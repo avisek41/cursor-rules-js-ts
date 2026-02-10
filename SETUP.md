@@ -37,6 +37,7 @@ ls -la .cursorrules .cursor/rules/
 
 You should see:
 - `.cursorrules` (project root)
+- `.cursor/rules/ai-assisted-development.mdc`
 - `.cursor/rules/code-quality.mdc`
 - `.cursor/rules/documentation.mdc`
 - `.cursor/rules/naming-conventions.mdc`
@@ -46,6 +47,9 @@ Close and reopen Cursor to ensure rules are loaded.
 
 ### Step 4: Test the rules
 Create a test file and ask Cursor to help you write code. The rules will be automatically applied!
+
+### Step 5: Add project-specific rules (optional)
+Any `.mdc` file you add in `.cursor/rules/` is **automatically linked and applied** by Cursor. Create e.g. `project-conventions.mdc` in that folder with your team’s rules—no extra config needed. See README section **“Adding Project-Specific Rules (Auto-Applied)”** for format and examples.
 
 ## 📦 For NPM Package Publishing
 

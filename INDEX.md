@@ -10,7 +10,13 @@
    - Integration instructions
    - **Copy this to your project root**
 
-2. **`.cursor/rules/code-quality.mdc`** - Code Quality Standards
+2. **`.cursor/rules/ai-assisted-development.mdc`** - AI-Assisted Development (DOs and DON'Ts)
+   - Plan before coding; small, reviewable steps
+   - Validate structure first; re-plan when off-track
+   - No blind acceptance; no legacy refactor out of scope
+   - Applies to React, Angular, Node.js, React Native
+
+3. **`.cursor/rules/code-quality.mdc`** - Code Quality Standards
    - Clean code principles
    - Error handling guidelines
    - Security best practices
@@ -18,7 +24,7 @@
    - Testing requirements
    - Language-specific guidelines (JS/TS)
 
-3. **`.cursor/rules/documentation.mdc`** - Documentation Standards
+4. **`.cursor/rules/documentation.mdc`** - Documentation Standards
    - Function/method documentation
    - README requirements
    - API documentation
@@ -26,7 +32,7 @@
    - Inline comments guidelines
    - Documentation tools
 
-4. **`.cursor/rules/naming-conventions.mdc`** - Naming Conventions
+5. **`.cursor/rules/naming-conventions.mdc`** - Naming Conventions
    - Variable and function naming
    - Class and type naming
    - File and directory naming
@@ -36,19 +42,19 @@
 
 ### Documentation Files
 
-5. **`README.md`** - Complete documentation
+6. **`README.md`** - Complete documentation
    - Overview of all rules
    - Usage instructions
    - Customization guide
    - Best practices
    - Troubleshooting
 
-6. **`SETUP.md`** - Quick setup guide
+7. **`SETUP.md`** - Quick setup guide
    - Step-by-step instructions
    - NPM package checklist
    - Verification steps
 
-7. **`INDEX.md`** - This file
+8. **`INDEX.md`** - This file
    - File index and navigation
 
 ## 🚀 Quick Start
@@ -81,6 +87,11 @@ cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .cursor/rules/
 ```
 
 ## 📖 Rule Categories
+
+### AI-Assisted Development
+- **File**: `.cursor/rules/ai-assisted-development.mdc`
+- **Focus**: Plan-first workflow, small steps, structure validation, re-plan when off
+- **Key Rules**: To-do before code; ~20–30 lines per step; no legacy refactor out of scope; review for layer, naming, i18n, types, a11y
 
 ### Code Quality
 - **File**: `.cursor/rules/code-quality.mdc`
@@ -166,10 +177,19 @@ Edit the `.mdc` files to add:
 - [ ] No abbreviations
 - [ ] Boolean prefixes correct
 
-## 🌐 Supported Languages
+## 🌐 Supported Stacks & Languages
 
-These rules work with:
-- ✅ JavaScript/TypeScript
+These rules target **TypeScript/JavaScript** across:
+- ✅ **React** (web)
+- ✅ **Angular**
+- ✅ **Node.js** (APIs, services, tooling)
+- ✅ **React Native** (mobile)
+
+## 📋 AI-Assisted Development (summary)
+
+- **DO**: Plan first (to-do list), small steps (~20–30 lines), validate structure, ask for review, re-plan when off.
+- **DON'T**: Jump into big tasks, request huge diffs, keep going when wrong, refactor legacy out of scope, accept code without checking layer/naming/i18n/types/a11y.
+- **One line**: Align on a plan first, then implement in small, reviewable steps.
 
 ## 📞 Need Help?
 

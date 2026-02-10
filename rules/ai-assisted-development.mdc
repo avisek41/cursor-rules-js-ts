@@ -1,0 +1,106 @@
+---
+description: AI-assisted development DOs and DON'Ts; plan-first, small steps, review (React, Angular, Node, React Native)
+alwaysApply: true
+---
+
+# AI-Assisted Development: DOs and DON'Ts
+
+This file teaches Cursor **how to think and behave** in your project—not what the code should look like (that’s in code-quality, documentation, naming). So developers can use short, natural prompts and still get high-quality, safe, reviewable code.
+
+Applies to **TypeScript/JavaScript** projects: React, Angular, Node.js, React Native. Align on a plan first, then implement in small, reviewable steps.
+
+---
+
+## DOs
+
+### 1. DO Start with a Plan Before Coding
+- Ask for a **step-by-step approach (to-do list)** before implementation.
+- Clarify: problem, expected outcome, and iterate on the plan until confident.
+- **Planning is cheaper to correct than code.**
+
+### 2. DO Implement in Small, Reviewable Steps
+- Execute the approved plan **one step at a time**.
+- Keep each change **small (~20–30 lines** where possible).
+- Small changes are easier to review, validate, and roll back.
+
+### 3. DO Validate Structure First for New Features
+- For new features, start with the **skeleton** (e.g. empty component in the right folder, route, or API stub).
+- Confirm it matches **codebase patterns and architecture** before adding logic.
+- Avoids costly restructuring later.
+
+**Where "skeleton" lives by stack:**
+
+| Stack        | Skeleton / pattern check                          |
+|-------------|----------------------------------------------------|
+| React       | Component in correct folder; hooks vs components  |
+| Angular     | Module/component in correct module; lazy loading  |
+| Node.js     | Handler/service in correct layer; route/API shape |
+| React Native| Screen/component + testID; native vs JS structure  |
+
+### 4. DO Ask for Code Review After Implementation
+- Once code works end-to-end, ask for review, e.g.:
+  - "Is this good practice in [React/TypeScript/Angular/Node]?"
+  - "Review this against our coding standards and suggest improvements."
+  - "Any performance, accessibility, or maintainability concerns?"
+
+### 5. DO Pause and Re-Plan When Something Feels Off
+- If the output seems wrong or off-track, **stop immediately**.
+- Return to **planning mode**: re-clarify requirements and approach.
+- Do not push forward hoping it will correct itself—early misunderstandings snowball.
+
+---
+
+## DON'Ts
+
+### 1. DON'T Jump Straight into Implementation for Big or Unclear Tasks
+- Skipping planning for complex features or bugs bakes misunderstandings into code.
+- Leads to rework, hard-to-review PRs, and wasted effort.
+
+### 2. DON'T Ask for Massive Changes at Once
+- Large diffs are harder to follow, validate, and debug.
+- Break requests into **smaller, focused tasks**.
+- If you can't easily review what changed, the change is too big.
+
+### 3. DON'T Keep Pushing Forward When Output Seems Wrong
+- If something feels off, do not continue hoping it will self-correct.
+- Each change built on a flawed foundation makes the problem worse.
+- **Stop, assess, and re-plan.**
+
+### 4. DON'T Refactor Legacy Code Just Because AI Suggests It
+- Only fix code **you wrote or made worse**.
+- Do not refactor **working legacy code** to satisfy AI or tool suggestions—you risk breaking stable behavior and scope creep.
+
+### 5. DON'T Blindly Accept AI-Generated Code
+- Always review output for:
+  - **Correct architecture layer** (e.g. component vs service vs API)
+  - **Naming and file organization** (per naming-conventions.mdc)
+  - **i18n** for all user-facing strings (no raw copy in UI)
+  - **No hardcoded values**; use config/env/constants
+  - **Proper TypeScript types** (no `any` unless justified)
+  - **Accessibility**: semantic HTML (web), testID + labels (React Native)
+
+---
+
+## One-Line Takeaway
+
+**Align on a plan first, then implement in small, reviewable steps**—minimizes rework and keeps code clean, predictable, and maintainable.
+
+---
+
+## Behavior for the AI (Cursor)
+
+When the user request is **large or ambiguous**:
+
+1. **Propose a short plan** (bullet to-do list) and ask for confirmation before writing code.
+2. **Keep each response small**: one logical step or ~20–30 lines of change where possible; offer to continue with the next step.
+3. **For new features**: suggest creating the skeleton (file/component/route) first and confirm placement, then add behavior.
+4. **If the user says something is wrong or off**: suggest re-planning or reverting the last step instead of adding more code on top.
+5. **Do not suggest refactors of unrelated legacy code** unless the user explicitly asks or the code is in scope of the current task.
+
+Before suggesting code, do a quick self-check:
+
+- [ ] Right layer (UI / service / API / util)?
+- [ ] Naming and file location match project conventions?
+- [ ] User-facing text ready for i18n (no hardcoded copy)?
+- [ ] No hardcoded config/secrets; types explicit where possible?
+- [ ] Accessibility considered (semantic HTML, testID, labels)?
