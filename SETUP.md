@@ -6,7 +6,7 @@
 
 **From npm:**
 ```bash
-npm install cursor-rules
+npm install @avisek_yorkie/cursor-rules
 ```
 
 **Or clone the repo** and use the path to your local `cursor-rules` folder in the steps below.
@@ -18,10 +18,10 @@ cd /path/to/your/project
 
 ### Step 2: Copy Cursor Rules
 
-**From the package (after `npm install cursor-rules`):**
+**From the package (after `npm install @avisek_yorkie/cursor-rules`):**
 ```bash
-cp node_modules/cursor-rules/.cursorrules .
-cp node_modules/cursor-rules/rules/*.mdc .
+cp node_modules/@avisek_yorkie/cursor-rules/.cursorrules .
+cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
 ```
 
 **From a local clone:**
@@ -74,14 +74,38 @@ Create a test file and ask Cursor to help you write code. The rules will be auto
 npm publish
 ```
 
+## 📤 Publishing This Package to npm
+
+To publish **this** cursor-rules package to npm:
+
+1. **Create an npm account** (if you don’t have one): [https://www.npmjs.com/signup](https://www.npmjs.com/signup)
+
+2. **Log in from the terminal:**
+   ```bash
+   npm login
+   ```
+   npm will print a **login URL**. Open it in your browser, sign in (or create an account), then return to the terminal—you’ll be logged in. Use a one-time password in the browser if you have 2FA enabled.
+
+4. **From this project root, publish:**
+   ```bash
+   cd /path/to/cursor-rules
+   npm publish
+   ```
+   The package is scoped as `@avisek_yorkie/cursor-rules` and `publishConfig.access` is set to `"public"`, so it will be published as a public package.
+
+5. **After publish**, anyone can install with:
+   ```bash
+   npm install @avisek_yorkie/cursor-rules
+   ```
+
 ## 🔄 Updating Rules
 
 If you update the rules (or upgrade the package), sync them to your project:
 
 ```bash
 # From your project root (when using npm package)
-cp node_modules/cursor-rules/.cursorrules .
-cp node_modules/cursor-rules/rules/*.mdc .
+cp node_modules/@avisek_yorkie/cursor-rules/.cursorrules .
+cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
 ```
 
 ## ✅ Verification
