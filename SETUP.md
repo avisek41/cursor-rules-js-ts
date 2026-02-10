@@ -2,23 +2,21 @@
 
 ## 🎯 Step-by-Step Setup for Your NPM Package (or Any Project)
 
-### Step 0: Get the Rules (choose one)
+### Step 0: Install the package
 
-**From npm:**
-```bash
-npm install @avisek_yorkie/cursor-rules
-```
-
-**Or clone the repo** and use the path to your local `cursor-rules` folder in the steps below.
-
-### Step 1: Navigate to Your Project
 ```bash
 cd /path/to/your/project
+npm install -D @avisek_yorkie/cursor-rules
 ```
 
-### Step 2: Copy Cursor Rules
+### Step 1: Apply the rules
 
-**From the package (after `npm install @avisek_yorkie/cursor-rules`):**
+**Option A – One command (recommended):**
+```bash
+npx cursor-rules-init
+```
+
+**Option B – Manual copy:**
 ```bash
 cp node_modules/@avisek_yorkie/cursor-rules/.cursorrules .
 cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
@@ -31,7 +29,7 @@ cp /path/to/cursor-rules/.cursorrules .
 cp /path/to/cursor-rules/rules/*.mdc .
 ```
 
-### Step 3: Verify Files Are in Place
+### Step 2: Verify files are in place
 ```bash
 ls -la .cursorrules *.mdc
 ```
@@ -42,10 +40,10 @@ You should see:
 - `documentation.mdc`
 - `naming-conventions.mdc`
 
-### Step 4: Restart Cursor (Optional)
+### Step 3: Restart Cursor (optional)
 Close and reopen Cursor to ensure rules are loaded.
 
-### Step 5: Test the Rules
+### Step 4: Test the rules
 Create a test file and ask Cursor to help you write code. The rules will be automatically applied!
 
 ## 📦 For NPM Package Publishing

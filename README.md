@@ -2,6 +2,31 @@
 
 This directory contains comprehensive cursor rules designed to work with any technology stack. These rules help maintain code quality, consistency, and best practices across all your projects.
 
+## Install & Integrate
+
+**1. Install the package** (as a dev dependency so it doesn’t ship to production):
+
+```bash
+npm install -D @avisek_yorkie/cursor-rules
+```
+
+**2. Apply the rules to your project** (run from your project root):
+
+```bash
+npx cursor-rules-init
+```
+
+This copies `.cursorrules` and the rule files (`code-quality.mdc`, `documentation.mdc`, `naming-conventions.mdc`) into your project root. Cursor will then **use and apply** these rules automatically when you write code, refactor, get completions, or ask for reviews.
+
+**Manual copy (alternative):**
+
+```bash
+cp node_modules/@avisek_yorkie/cursor-rules/.cursorrules .
+cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
+```
+
+**3. Verify:** Ensure `.cursorrules` and the three `.mdc` files are in your project root. Restart Cursor if needed. You’re done.
+
 ## 📁 Directory Structure
 
 ```
@@ -17,35 +42,32 @@ cursor-rules/
 
 ## 🚀 Quick Start
 
-### Step 1: Install (optional)
+### Step 1: Install
 
 ```bash
-npm install @avisek_yorkie/cursor-rules
+npm install -D @avisek_yorkie/cursor-rules
 ```
 
-### Step 2: Copy Rules to Your Project
+### Step 2: Apply rules (choose one)
 
-Copy the `.cursorrules` file and all rule files from `rules/` to your project root:
-
+**Option A – One command (recommended):**
 ```bash
-# From your project root (after npm install @avisek_yorkie/cursor-rules)
+npx cursor-rules-init
+```
+
+**Option B – Manual copy from node_modules:**
+```bash
 cp node_modules/@avisek_yorkie/cursor-rules/.cursorrules .
 cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
 ```
 
-Or from a local clone:
+**Option C – From a local clone:**
 ```bash
 cp /path/to/cursor-rules/.cursorrules .
 cp /path/to/cursor-rules/rules/*.mdc .
 ```
 
-Manual copy:
-- `.cursorrules` → Your project root
-- `rules/code-quality.mdc` → Your project root (as `code-quality.mdc`)
-- `rules/documentation.mdc` → Your project root (as `documentation.mdc`)
-- `rules/naming-conventions.mdc` → Your project root (as `naming-conventions.mdc`)
-
-### Step 3: Verify Integration
+### Step 3: Verify integration
 
 Cursor will automatically detect and use the `.cursorrules` file in your project root. The rules will be applied when:
 - Writing new code

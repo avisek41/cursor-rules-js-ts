@@ -16,7 +16,11 @@
     "type": "git",
     "url": "git+https://github.com/avisek41/cursor-rules-js-ts.git"
   },
+  "bin": {
+    "cursor-rules-init": "bin/init.js"
+  },
   "files": [
+    "bin",
     "rules",
     "README.md",
     "SETUP.md",
