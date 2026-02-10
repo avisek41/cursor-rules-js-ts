@@ -19,7 +19,7 @@ npx cursor-rules-init
 This creates:
 
 - **`.cursorrules`** in your project root  
-- **`.cursor/rules/`** with `ai-assisted-development.mdc`, `code-quality.mdc`, `documentation.mdc`, `naming-conventions.mdc`, and `typescript-patterns.mdc`
+- **`.cursor/rules/`** with `ai-assisted-development.mdc`, `code-quality.mdc`, `documentation.mdc`, `naming-conventions.mdc`, `typescript-patterns.mdc`, and `modern-js-ts-patterns.mdc`
 
 Cursor will **use and apply** these rules automatically when you write code, refactor, get completions, or ask for reviews.
 
@@ -44,7 +44,8 @@ your-project/
 │       ├── code-quality.mdc
 │       ├── documentation.mdc
 │       ├── naming-conventions.mdc
-│       └── typescript-patterns.mdc
+│       ├── typescript-patterns.mdc
+│       └── modern-js-ts-patterns.mdc
 ├── src/
 └── ...
 ```
@@ -59,6 +60,7 @@ cursor-rules/
 │  ├── documentation.mdc           # Documentation standards and guidelines
 │  ├── naming-conventions.mdc       # Naming conventions (JS/TS)
 │  ├── typescript-patterns.mdc       # TypeScript patterns and type safety
+│  ├── modern-js-ts-patterns.mdc    # Modern JS/TS - async, optional chaining, array methods
 ├── .cursorrules            # Main cursor rules file (copy to project root)
 ├── README.md
 └── SETUP.md
@@ -168,6 +170,7 @@ your-project/
 │       ├── documentation.mdc              # from this package
 │       ├── naming-conventions.mdc        # from this package
 │       ├── typescript-patterns.mdc        # from this package
+│       ├── modern-js-ts-patterns.mdc     # from this package
 │       └── project-conventions.mdc        # your project-specific rule ✅
 ├── src/
 └── ...
@@ -243,6 +246,19 @@ Covers:
 - Enable `strict: true`; prefer `unknown` + type guards over `any`
 - Use interfaces for object shapes; types for unions and complex types
 - Use built-in utility types; constrain generics; 1–2 type params preferred
+
+### 5. Modern JS/TS Patterns (`.cursor/rules/modern-js-ts-patterns.mdc`)
+
+Covers:
+- ✅ Async/await over promise chains; try/catch; Promise.all / Promise.allSettled
+- ✅ No async in forEach—use for...of or Promise.all
+- ✅ Optional chaining (`?.`) and nullish coalescing (`??`)
+- ✅ Destructuring for params and defaults; rename when needed
+- ✅ Prefer map/filter/reduce, some/every, find/findIndex over imperative loops
+
+**Key Principles:**
+- Use `?.` and `??` instead of nested `&&` and `||` for optional/default values
+- Use array methods for transformation and boolean checks; avoid filter()[0] in favor of find()
 
 ## 📐 Coding Styles & Principles
 

@@ -2,11 +2,83 @@
 
 Comprehensive rules for **TS/JS** projects: **React**, **Angular**, **Node.js**, **React Native**. Code quality, maintainability, consistency, and AI-assisted development workflow.
 
+
+
 ## How to Use These Rules
 
 1. Copy this `.cursorrules` file to your project root
 2. Copy the rule files into `.cursor/rules/` (see Rule Categories below)
 3. Cursor will automatically apply these rules when assisting with code
+
+## 🎯 Global Rule Application
+
+**These rules are ALWAYS applied automatically when the user asks to:**
+- `review` / `code review` / `check this`
+- `refactor` / `restructure`
+- `improve` / `enhance` / `make better` / `clean this up`
+- `clean` / `clean up` / `cleanup`
+- `fix` / `debug` / `solve` / `repair`
+- `optimize` / `performance` / `make faster`
+- `rename` / `better names`
+- `document` / `add docs` / `write docs` / `comment this`
+- `create` / `build` / `implement` / `add` / `make`
+- `update` / `modify` / `change` / `edit`
+- `test` / `add tests` / `write tests`
+- `validate` / `check` / `verify`
+- `explain` / `describe` / `how does this work` / `what does this do`
+- `analyze` / `assess`
+
+**The user does NOT need to mention "rules", "standards", or "best practices" explicitly.**
+
+### Automatic Rule Application by Request Type
+
+| User Says | Auto-Apply These Rules | Action Priority |
+|-----------|------------------------|-----------------|
+| `review this` | ALL rules (quality + naming + docs) | 1. Critical bugs<br>2. Quality violations<br>3. Naming issues<br>4. Missing docs/tests |
+| `refactor this` | Code quality + Naming + Modern patterns | Keep changes small, apply DRY/SOLID |
+| `improve this` | ALL rules | Same as review |
+| `create [feature]` | AI-dev workflow → Quality | **STOP**: Plan first, confirm, then implement in steps |
+| `fix [bug]` | AI-dev workflow + Quality | Understand → Propose fix → Implement → Add test |
+| `document this` | Documentation + Naming | JSDoc for public APIs, explain WHY not WHAT |
+| `optimize this` | Code quality (performance) | Profile first, avoid premature optimization |
+| `add tests` | Code quality (testing) | Test business logic, edge cases, errors |
+
+### Enforcement Rules
+
+**When user says "review" or "improve":**
+✅ Automatically check against:
+- Functions <50 lines (ideal 20-30)
+- No magic numbers/strings (use constants)
+- No code duplication (DRY)
+- Proper error handling (never silent failures)
+- No `any` in TypeScript (use `unknown` + type guards)
+- Meaningful names (no abbreviations, descriptive)
+- Max 3-4 function parameters (use config object if more)
+- Input validation at boundaries
+- Accessibility (semantic HTML, testID for React Native)
+
+**When user says "create" or "build":**
+1. ⚠️ **STOP - Don't code immediately**
+2. Propose step-by-step plan (bullet list)
+3. Wait for confirmation
+4. Implement in small steps (~20-30 lines per change)
+5. For new features: Create skeleton/structure first, confirm placement, then add logic
+
+**When user says "refactor":**
+- Apply SOLID, DRY, KISS principles
+- Extract duplication
+- Simplify complexity (max 10 cyclomatic complexity)
+- Improve naming
+- Keep each change small and reviewable
+- ❌ Do NOT refactor working legacy code outside the task scope
+
+**When user says "fix":**
+1. Understand root cause
+2. Propose fix approach
+3. Implement with proper error handling
+4. Suggest adding test to prevent regression
+
+---
 
 ## Rule Categories
 
@@ -46,6 +118,11 @@ Rules in `.cursor/rules/` are applied automatically.
 - Utility types: Partial, Pick, Omit, Record, ReturnType, etc.
 - Generics: constraints, default params, avoid over-engineering
 - Advanced: `as const`, `satisfies`, readonly, template literal types
+
+### 6. Modern JS/TS Patterns (.cursor/rules/modern-js-ts-patterns.mdc)
+- Async/await over promise chains; Promise.all / allSettled; no async in forEach
+- Optional chaining (`?.`) and nullish coalescing (`??`)
+- Destructuring for params and defaults; map/filter/reduce, some/every, find/findIndex
 
 ## Core Principles
 

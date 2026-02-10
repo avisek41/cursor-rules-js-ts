@@ -44,21 +44,25 @@
    - Type safety: avoid `any`, `unknown` + type guards, strict mode, interface vs type
    - Discriminated unions; utility types; generics; `as const`, `satisfies`
 
+7. **`.cursor/rules/modern-js-ts-patterns.mdc`** - Modern JS/TS Patterns
+   - Async/await, Promise.all / allSettled; optional chaining & nullish coalescing
+   - Destructuring; map/filter/reduce, some/every, find/findIndex
+
 ### Documentation Files
 
-7. **`README.md`** - Complete documentation
+8. **`README.md`** - Complete documentation
    - Overview of all rules
    - Usage instructions
    - Customization guide
    - Best practices
    - Troubleshooting
 
-8. **`SETUP.md`** - Quick setup guide
+9. **`SETUP.md`** - Quick setup guide
    - Step-by-step instructions
    - NPM package checklist
    - Verification steps
 
-9. **`INDEX.md`** - This file
+10. **`INDEX.md`** - This file
    - File index and navigation
 
 ## 🚀 Quick Start
@@ -127,6 +131,11 @@ cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .cursor/rules/
 - **File**: `.cursor/rules/typescript-patterns.mdc`
 - **Focus**: Type safety, utility types, generics, advanced TS features
 - **Key Rules**: Avoid `any` (use `unknown` + guards); strict mode; interface vs type; discriminated unions; Partial/Pick/Omit/Record; constrained generics; `as const` / `satisfies`
+
+### Modern JS/TS Patterns
+- **File**: `.cursor/rules/modern-js-ts-patterns.mdc`
+- **Focus**: Async/await, optional chaining, nullish coalescing, destructuring, array methods
+- **Key Rules**: async/await over chains; try/catch; Promise.all / allSettled; no async in forEach; `?.` and `??`; map/filter/reduce, some/every, find/findIndex
   - Use appropriate prefixes
 
 ## 🎯 Use Cases

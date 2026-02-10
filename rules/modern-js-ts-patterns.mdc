@@ -1,0 +1,91 @@
+---
+description: Modern JavaScript/TypeScript patterns - async/await, optional chaining, destructuring, array methods
+alwaysApply: true
+---
+
+# Modern JS/TS Patterns
+
+Apply when writing JavaScript or TypeScript. Prefer modern, declarative syntax over legacy patterns.
+
+---
+
+## Async/Await Patterns
+
+- **Always use async/await** over raw promise chains (`.then()`/`.catch()`).
+- **Handle errors with try/catch** (or propagate to caller); never leave promise rejections unhandled.
+- **Avoid async inside `forEach`**—`forEach` does not wait for promises. Use `for...of` with await, or `Promise.all()` / `Promise.allSettled()`.
+- **Use `Promise.all()`** when you need all operations to succeed and can run them in parallel.
+- **Use `Promise.allSettled()`** when some failures are acceptable and you want all results (success or failure).
+
+```javascript
+// ✅ Good - for...of with await
+for (const id of ids) {
+  const item = await fetchItem(id);
+  results.push(item);
+}
+
+// ✅ Good - parallel with Promise.all
+const results = await Promise.all(ids.map((id) => fetchItem(id)));
+
+// ✅ Good - parallel when some may fail
+const outcomes = await Promise.allSettled(ids.map((id) => fetchItem(id)));
+
+// ❌ Bad - forEach does not wait for async
+ids.forEach(async (id) => {
+  const item = await fetchItem(id); // fire-and-forget; caller won't wait
+  results.push(item);
+});
+```
+
+---
+
+## Optional Chaining & Nullish Coalescing
+
+- Use **`?.`** (optional chaining) instead of nested `&&` checks for property access.
+- Use **`??`** (nullish coalescing) for default values when the value may be `null` or `undefined` (not when it may be `0`, `''`, or `false`—then use `||` if that's intended).
+
+```javascript
+// ✅ Good
+const userName = user?.profile?.name ?? 'Guest';
+const count = options?.limit ?? 10;
+
+// ❌ Bad - verbose and easy to get wrong
+const userName = user && user.profile && user.profile.name || 'Guest';
+```
+
+---
+
+## Destructuring
+
+- **Use object destructuring** for function parameters (especially when there are several options).
+- **Use default values** in destructuring to simplify optional props.
+- **Rename** when the default name is unclear or clashes: `const { name: displayName } = user`.
+
+```javascript
+// ✅ Good - destructured params with defaults
+function createUser({ name, email, role = 'user' }) {
+  return { name, email, role };
+}
+
+// ✅ Good - rename for clarity
+const { name: userName, email: userEmail } = user;
+```
+
+---
+
+## Array Methods
+
+- **Prefer `map` / `filter` / `reduce`** over imperative `for` loops when you're transforming, filtering, or reducing an array.
+- **Use `some()` / `every()`** for boolean checks (e.g. "does any item match?" / "do all match?") instead of manual loops.
+- **Use `find()` / `findIndex()`** when you need one matching element—not `filter()[0]` (which is less clear and does extra work).
+
+```javascript
+// ✅ Good
+const names = users.map((u) => u.name);
+const active = users.filter((u) => u.isActive);
+const hasAdmin = users.some((u) => u.role === 'admin');
+const firstMatch = items.find((x) => x.id === targetId);
+
+// ❌ Avoid - filter then [0]
+const firstMatch = items.filter((x) => x.id === targetId)[0];
+```

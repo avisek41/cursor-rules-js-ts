@@ -42,6 +42,7 @@ You should see:
 - `.cursor/rules/documentation.mdc`
 - `.cursor/rules/naming-conventions.mdc`
 - `.cursor/rules/typescript-patterns.mdc`
+- `.cursor/rules/modern-js-ts-patterns.mdc`
 
 ### Step 3: Restart Cursor (optional)
 Close and reopen Cursor to ensure rules are loaded.
