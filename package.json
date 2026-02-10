@@ -1,6 +1,6 @@
 {
   "name": "@avisek_yorkie/cursor-rules",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Cursor AI rules for code quality, documentation, and naming conventions (JS/TS)",
   "keywords": [
     "cursor",
