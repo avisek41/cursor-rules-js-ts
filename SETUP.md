@@ -5,7 +5,7 @@
 ### Step 0: Install the package
 
 ```bash
-cd /path/to/your/project
+cd /avisek/to/your/project
 npm install -D @avisek_yorkie/cursor-rules
 ```
 
