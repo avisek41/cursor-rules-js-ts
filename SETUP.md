@@ -41,6 +41,7 @@ You should see:
 - `.cursor/rules/code-quality.mdc`
 - `.cursor/rules/documentation.mdc`
 - `.cursor/rules/naming-conventions.mdc`
+- `.cursor/rules/typescript-patterns.mdc`
 
 ### Step 3: Restart Cursor (optional)
 Close and reopen Cursor to ensure rules are loaded.

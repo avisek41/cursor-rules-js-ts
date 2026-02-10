@@ -19,6 +19,7 @@ const filesToCopy = [
   { src: 'rules/code-quality.mdc', dest: '.cursor/rules/code-quality.mdc' },
   { src: 'rules/documentation.mdc', dest: '.cursor/rules/documentation.mdc' },
   { src: 'rules/naming-conventions.mdc', dest: '.cursor/rules/naming-conventions.mdc' },
+  { src: 'rules/typescript-patterns.mdc', dest: '.cursor/rules/typescript-patterns.mdc' },
 ];
 
 if (!fs.existsSync(cursorRulesDir)) {
@@ -39,7 +40,7 @@ for (const { src, dest } of filesToCopy) {
 if (copied > 0) {
   console.log('\nCursor rules installed.');
   console.log('  .cursorrules');
-  console.log('  .cursor/rules/ (ai-assisted-development, code-quality, documentation, naming-conventions)');
+  console.log('  .cursor/rules/ (ai-assisted-development, code-quality, documentation, naming-conventions, typescript-patterns)');
   console.log('\nCursor will apply them automatically.');
 } else {
   console.error('No rule files found. Reinstall @avisek_yorkie/cursor-rules.');

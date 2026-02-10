@@ -19,7 +19,7 @@ npx cursor-rules-init
 This creates:
 
 - **`.cursorrules`** in your project root  
-- **`.cursor/rules/`** with `code-quality.mdc`, `documentation.mdc`, and `naming-conventions.mdc`
+- **`.cursor/rules/`** with `ai-assisted-development.mdc`, `code-quality.mdc`, `documentation.mdc`, `naming-conventions.mdc`, and `typescript-patterns.mdc`
 
 Cursor will **use and apply** these rules automatically when you write code, refactor, get completions, or ask for reviews.
 
@@ -40,9 +40,11 @@ your-project/
 ├── .cursorrules
 ├── .cursor/
 │   └── rules/
+│       ├── ai-assisted-development.mdc
 │       ├── code-quality.mdc
 │       ├── documentation.mdc
-│       └── naming-conventions.mdc
+│       ├── naming-conventions.mdc
+│       └── typescript-patterns.mdc
 ├── src/
 └── ...
 ```
@@ -52,9 +54,11 @@ your-project/
 ```
 cursor-rules/
 ├── rules/
-│  ├── code-quality.mdc      # Code quality standards and best practices
-│  ├── documentation.mdc    # Documentation standards and guidelines
-│  ├── naming-conventions.mdc # Naming conventions (JS/TS)
+│  ├── ai-assisted-development.mdc  # AI workflow (plan-first, small steps)
+│  ├── code-quality.mdc             # Code quality standards and best practices
+│  ├── documentation.mdc           # Documentation standards and guidelines
+│  ├── naming-conventions.mdc       # Naming conventions (JS/TS)
+│  ├── typescript-patterns.mdc       # TypeScript patterns and type safety
 ├── .cursorrules            # Main cursor rules file (copy to project root)
 ├── README.md
 └── SETUP.md
@@ -159,9 +163,11 @@ your-project/
 ├── .cursor/
 │   └── rules/
 │       ├── ai-assisted-development.mdc   # from this package
+│       ├── ai-assisted-development.mdc   # from this package
 │       ├── code-quality.mdc               # from this package
 │       ├── documentation.mdc              # from this package
-│       ├── naming-conventions.mdc         # from this package
+│       ├── naming-conventions.mdc        # from this package
+│       ├── typescript-patterns.mdc        # from this package
 │       └── project-conventions.mdc        # your project-specific rule ✅
 ├── src/
 └── ...
@@ -223,6 +229,20 @@ Covers:
 - Be consistent throughout codebase
 - Avoid abbreviations and generic names
 - Use appropriate prefixes for booleans
+
+### 4. TypeScript Patterns (`.cursor/rules/typescript-patterns.mdc`)
+
+Covers:
+- ✅ Type safety: avoid `any`, use `unknown` and type guards; strict mode
+- ✅ Interface vs type; discriminated unions for complex state
+- ✅ Utility types: Partial, Pick, Omit, Record, ReturnType, Parameters, Awaited
+- ✅ Generics: constraints, default params; avoid over-engineering
+- ✅ Advanced: `as const`, `satisfies`, readonly, template literal types
+
+**Key Principles:**
+- Enable `strict: true`; prefer `unknown` + type guards over `any`
+- Use interfaces for object shapes; types for unions and complex types
+- Use built-in utility types; constrain generics; 1–2 type params preferred
 
 ## 📐 Coding Styles & Principles
 

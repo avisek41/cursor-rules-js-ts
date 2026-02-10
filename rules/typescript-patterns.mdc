@@ -1,0 +1,170 @@
+---
+description: TypeScript-specific patterns, type safety, utility types, generics, and advanced features
+alwaysApply: true
+---
+
+# TypeScript Best Practices
+
+Apply when writing or reviewing TypeScript. Prefer type-safe, explicit code over `any` and loose types.
+
+**When suggesting TypeScript code, always:** avoid `any` (use `unknown` + type guards); use `interface` for object shapes and `type` for unions; prefer utility types (Partial, Pick, Omit, Record, ReturnType) over hand-rolled types; constrain generics with `extends` when needed; use discriminated unions for multi-shaped state.
+
+---
+
+## Type Safety
+
+### Avoid `any`; use `unknown` and type guards
+- **`any`** disables type checking—use only when necessary (e.g. legacy integration, escape hatch with a comment).
+- Prefer **`unknown`** for values you don't yet know; narrow with type guards.
+
+```typescript
+// ✅ Good - unknown + type guard
+function parsePayload(input: unknown): User {
+  if (isUser(input)) return input;
+  throw new Error('Invalid payload');
+}
+function isUser(v: unknown): v is User {
+  return typeof v === 'object' && v !== null && 'id' in v && 'email' in v;
+}
+
+// ❌ Bad - any
+function parsePayload(input: any): User {
+  return input;
+}
+```
+
+### Enable strict mode
+- Use **`strict: true`** in `tsconfig.json` (or at least `strictNullChecks`, `noImplicitAny`).
+- Fix strict-mode errors rather than weakening the config.
+
+### Interface vs type
+- **`interface`**: object shapes, extendable, declaration merging. Prefer for public API and object contracts.
+- **`type`**: unions, intersections, mapped types, tuple types, primitives. Use for unions and complex types.
+
+```typescript
+// ✅ Interface for object shapes
+interface User {
+  id: string;
+  email: string;
+}
+
+// ✅ Type for unions and complex types
+type Status = 'pending' | 'success' | 'error';
+type ApiResponse<T> = { data: T } | { error: string };
+```
+
+### Discriminated unions for complex state
+- Use a common literal field (`kind`, `type`, `status`) to narrow safely.
+
+```typescript
+// ✅ Good - discriminated union
+type Result =
+  | { kind: 'ok'; data: User }
+  | { kind: 'error'; message: string };
+
+function handle(result: Result) {
+  if (result.kind === 'ok') {
+    console.log(result.data); // narrowed to { data: User }
+  } else {
+    console.log(result.message); // narrowed to { message: string }
+  }
+}
+```
+
+---
+
+## Utility Types
+
+Use built-in utility types instead of hand-rolling:
+
+| Utility | Use when |
+|---------|----------|
+| **`Partial<T>`** | All properties optional (e.g. updates, overrides). |
+| **`Required<T>`** | All properties required. |
+| **`Readonly<T>`** | Immutable view of an object. |
+| **`Pick<T, K>`** | Subset of keys from T. |
+| **`Omit<T, K>`** | T without certain keys. |
+| **`Record<K, V>`** | Object with known keys and value type (e.g. map string → T). |
+| **`NonNullable<T>`** | Remove null and undefined from T. |
+| **`ReturnType<T>`** | Return type of a function type. |
+| **`Parameters<T>`** | Tuple of a function’s parameter types. |
+| **`Awaited<T>`** | Unwrap Promise (and nested) type. |
+
+```typescript
+// Examples
+type UserUpdate = Partial<User>;
+type UserIdOnly = Pick<User, 'id'>;
+type UserWithoutEmail = Omit<User, 'email'>;
+type ApiHandlers = Record<string, (req: Request) => Response>;
+type FnReturn = ReturnType<typeof fetchUser>;
+```
+
+---
+
+## Generics
+
+- Use generics for **reusable, type-safe** logic (functions, components, hooks).
+- **Constrain** when you need a specific shape: `<T extends { id: string }>`.
+- Keep **few type parameters** (1–2 preferred); more than 3 is a code smell—consider a single object type parameter.
+
+```typescript
+// ✅ Good - constrained generic
+function getById<T extends { id: string }>(items: T[], id: string): T | undefined {
+  return items.find((item) => item.id === id);
+}
+
+// ✅ Good - single generic, clear purpose
+function first<T>(arr: T[]): T | undefined {
+  return arr[0];
+}
+
+// ❌ Avoid - too many generic parameters
+function mapKeysAndValues<T, K extends keyof T, V>(obj: T, key: K, fn: (v: T[K]) => V): V { ... }
+```
+
+### Default type parameters
+- Use when a sensible default exists: `<T = unknown>`, `<T = string>`.
+
+---
+
+## Advanced Patterns
+
+### `const` assertions and `as const`
+- Use **`as const`** for literal types and readonly tuples so types are inferred narrowly.
+
+```typescript
+const ROUTES = ['home', 'profile', 'settings'] as const;
+type Route = (typeof ROUTES)[number]; // 'home' | 'profile' | 'settings'
+```
+
+### `satisfies` (TS 4.9+)
+- Use **`satisfies SomeType`** when you want inference to stay narrow but still check against a type.
+
+```typescript
+const config = {
+  theme: 'dark',
+  count: 10,
+} satisfies { theme: string; count: number };
+// config.theme is 'dark', not just string
+```
+
+### Readonly and immutability
+- Prefer **`readonly`** for arrays and readonly types for public API when callers must not mutate.
+- Use **`Readonly<T>`** or `readonly` modifier for object/array shapes that shouldn’t change.
+
+### Template literal types
+- Use for string patterns: `` type EventName = `on${Capitalize<string>}` ``.
+
+### Avoid non-null assertion (`!`) when possible
+- Prefer explicit checks or optional chaining; use `!` only when you have proven non-null (e.g. after a guard) and document why.
+
+---
+
+## Summary
+
+- **Strict + no `any`**: Prefer `unknown` and type guards.
+- **Interfaces** for object shapes; **types** for unions and complex types.
+- **Discriminated unions** for multi-shaped state.
+- **Utility types** instead of manual mappings.
+- **Constrained generics** with 1–2 parameters; default when helpful.
+- **`as const`** and **`satisfies`** for precise inference.

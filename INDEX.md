@@ -40,21 +40,25 @@
    - Database and API naming
    - Configuration naming
 
+6. **`.cursor/rules/typescript-patterns.mdc`** - TypeScript Patterns
+   - Type safety: avoid `any`, `unknown` + type guards, strict mode, interface vs type
+   - Discriminated unions; utility types; generics; `as const`, `satisfies`
+
 ### Documentation Files
 
-6. **`README.md`** - Complete documentation
+7. **`README.md`** - Complete documentation
    - Overview of all rules
    - Usage instructions
    - Customization guide
    - Best practices
    - Troubleshooting
 
-7. **`SETUP.md`** - Quick setup guide
+8. **`SETUP.md`** - Quick setup guide
    - Step-by-step instructions
    - NPM package checklist
    - Verification steps
 
-8. **`INDEX.md`** - This file
+9. **`INDEX.md`** - This file
    - File index and navigation
 
 ## 🚀 Quick Start
@@ -118,6 +122,11 @@ cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .cursor/rules/
   - Descriptive names that reveal intent
   - Follow language conventions
   - Be consistent
+
+### TypeScript Patterns
+- **File**: `.cursor/rules/typescript-patterns.mdc`
+- **Focus**: Type safety, utility types, generics, advanced TS features
+- **Key Rules**: Avoid `any` (use `unknown` + guards); strict mode; interface vs type; discriminated unions; Partial/Pick/Omit/Record; constrained generics; `as const` / `satisfies`
   - Use appropriate prefixes
 
 ## 🎯 Use Cases

@@ -40,6 +40,13 @@ Rules in `.cursor/rules/` are applied automatically.
 - Language-specific conventions
 - Database and API naming
 
+### 5. TypeScript Patterns (.cursor/rules/typescript-patterns.mdc)
+- Type safety: avoid `any`, use `unknown` and type guards; strict mode; interface vs type
+- Discriminated unions for complex state
+- Utility types: Partial, Pick, Omit, Record, ReturnType, etc.
+- Generics: constraints, default params, avoid over-engineering
+- Advanced: `as const`, `satisfies`, readonly, template literal types
+
 ## Core Principles
 
 ### Code Quality
