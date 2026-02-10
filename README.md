@@ -16,18 +16,38 @@ npm install -D @avisek_yorkie/cursor-rules
 npx cursor-rules-init
 ```
 
-This copies `.cursorrules` and the rule files (`code-quality.mdc`, `documentation.mdc`, `naming-conventions.mdc`) into your project root. Cursor will then **use and apply** these rules automatically when you write code, refactor, get completions, or ask for reviews.
+This creates:
+
+- **`.cursorrules`** in your project root  
+- **`.cursor/rules/`** with `code-quality.mdc`, `documentation.mdc`, and `naming-conventions.mdc`
+
+Cursor will **use and apply** these rules automatically when you write code, refactor, get completions, or ask for reviews.
 
 **Manual copy (alternative):**
 
 ```bash
+mkdir -p .cursor/rules
 cp node_modules/@avisek_yorkie/cursor-rules/.cursorrules .
-cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
+cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .cursor/rules/
 ```
 
-**3. Verify:** Ensure `.cursorrules` and the three `.mdc` files are in your project root. Restart Cursor if needed. You’re done.
+**3. Verify:** Ensure `.cursorrules` exists and `.cursor/rules/` contains the three `.mdc` files. Restart Cursor if needed. You’re done.
 
-## 📁 Directory Structure
+**Resulting structure in your project:**
+
+```
+your-project/
+├── .cursorrules
+├── .cursor/
+│   └── rules/
+│       ├── code-quality.mdc
+│       ├── documentation.mdc
+│       └── naming-conventions.mdc
+├── src/
+└── ...
+```
+
+## 📁 Directory Structure (this package)
 
 ```
 cursor-rules/
@@ -57,14 +77,16 @@ npx cursor-rules-init
 
 **Option B – Manual copy from node_modules:**
 ```bash
+mkdir -p .cursor/rules
 cp node_modules/@avisek_yorkie/cursor-rules/.cursorrules .
-cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
+cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .cursor/rules/
 ```
 
 **Option C – From a local clone:**
 ```bash
+mkdir -p .cursor/rules
 cp /path/to/cursor-rules/.cursorrules .
-cp /path/to/cursor-rules/rules/*.mdc .
+cp /path/to/cursor-rules/rules/*.mdc .cursor/rules/
 ```
 
 ### Step 3: Verify integration
@@ -84,7 +106,7 @@ You can customize these rules for your specific project by:
 
 ## 📚 Rule Files Overview
 
-### 1. Code Quality (`rules/code-quality.mdc`)
+### 1. Code Quality (`.cursor/rules/code-quality.mdc`)
 
 Covers:
 - ✅ Clean code standards
@@ -102,7 +124,7 @@ Covers:
 - Never hardcode secrets
 - Keep cyclomatic complexity low
 
-### 2. Documentation (`rules/documentation.mdc`)
+### 2. Documentation (`.cursor/rules/documentation.mdc`)
 
 Covers:
 - ✅ Function/method documentation standards
@@ -119,7 +141,7 @@ Covers:
 - Keep documentation up-to-date
 - Use appropriate documentation tools
 
-### 3. Naming Conventions (`rules/naming-conventions.mdc`)
+### 3. Naming Conventions (`.cursor/rules/naming-conventions.mdc`)
 
 Covers:
 - ✅ Variable and function naming
@@ -147,8 +169,9 @@ mkdir my-new-project
 cd my-new-project
 
 # Copy cursor rules
+mkdir -p .cursor/rules
 cp node_modules/@avisek_yorkie/cursor-rules/.cursorrules .
-cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
+cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .cursor/rules/
 
 # Initialize your project (npm, pip, etc.)
 npm init -y  # or your package manager
@@ -163,8 +186,9 @@ npm init -y  # or your package manager
 cd /path/to/your/project
 
 # Copy rules (backup existing .cursorrules if present)
+mkdir -p .cursor/rules
 cp node_modules/@avisek_yorkie/cursor-rules/.cursorrules .
-cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
+cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .cursor/rules/
 
 # Review and merge with existing rules if needed
 ```
@@ -207,7 +231,7 @@ Edit `.cursorrules` to add project-specific rules:
 Edit the appropriate `.mdc` file to add language-specific rules:
 
 ```markdown
-# In rules/code-quality.mdc
+# In .cursor/rules/code-quality.mdc
 
 ### Your Language
 - Follow your language style guide
@@ -273,7 +297,7 @@ Consider versioning your rules:
 ### Rules Not Being Applied
 
 1. Check that `.cursorrules` is in project root
-2. Verify `.mdc` files are in project root (copied from `rules/`)
+2. Verify `.cursor/rules/` contains the three `.mdc` files
 3. Restart Cursor if needed
 4. Check for syntax errors in rule files
 

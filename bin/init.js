@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Copies .cursorrules and rules/*.mdc from this package to the current working directory.
+ * Installs Cursor rules: .cursorrules in project root, .mdc files in .cursor/rules/
  * Run from your project root: npx cursor-rules-init
  */
 
@@ -11,12 +11,18 @@ const path = require('path');
 const packageRoot = path.join(__dirname, '..');
 const targetDir = process.cwd();
 
+const cursorRulesDir = path.join(targetDir, '.cursor', 'rules');
+
 const filesToCopy = [
   { src: '.cursorrules', dest: '.cursorrules' },
-  { src: 'rules/code-quality.mdc', dest: 'code-quality.mdc' },
-  { src: 'rules/documentation.mdc', dest: 'documentation.mdc' },
-  { src: 'rules/naming-conventions.mdc', dest: 'naming-conventions.mdc' },
+  { src: 'rules/code-quality.mdc', dest: '.cursor/rules/code-quality.mdc' },
+  { src: 'rules/documentation.mdc', dest: '.cursor/rules/documentation.mdc' },
+  { src: 'rules/naming-conventions.mdc', dest: '.cursor/rules/naming-conventions.mdc' },
 ];
+
+if (!fs.existsSync(cursorRulesDir)) {
+  fs.mkdirSync(cursorRulesDir, { recursive: true });
+}
 
 let copied = 0;
 for (const { src, dest } of filesToCopy) {
@@ -30,7 +36,10 @@ for (const { src, dest } of filesToCopy) {
 }
 
 if (copied > 0) {
-  console.log('\nCursor rules installed. Cursor will apply them automatically.');
+  console.log('\nCursor rules installed.');
+  console.log('  .cursorrules');
+  console.log('  .cursor/rules/ (code-quality, documentation, naming-conventions)');
+  console.log('\nCursor will apply them automatically.');
 } else {
   console.error('No rule files found. Reinstall @avisek_yorkie/cursor-rules.');
   process.exit(1);

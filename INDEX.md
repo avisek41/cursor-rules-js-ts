@@ -10,7 +10,7 @@
    - Integration instructions
    - **Copy this to your project root**
 
-2. **`rules/code-quality.mdc`** - Code Quality Standards
+2. **`.cursor/rules/code-quality.mdc`** - Code Quality Standards
    - Clean code principles
    - Error handling guidelines
    - Security best practices
@@ -18,7 +18,7 @@
    - Testing requirements
    - Language-specific guidelines (JS/TS)
 
-3. **`rules/documentation.mdc`** - Documentation Standards
+3. **`.cursor/rules/documentation.mdc`** - Documentation Standards
    - Function/method documentation
    - README requirements
    - API documentation
@@ -26,7 +26,7 @@
    - Inline comments guidelines
    - Documentation tools
 
-4. **`rules/naming-conventions.mdc`** - Naming Conventions
+4. **`.cursor/rules/naming-conventions.mdc`** - Naming Conventions
    - Variable and function naming
    - Class and type naming
    - File and directory naming
@@ -55,10 +55,14 @@
 
 ### For New Projects
 ```bash
-# 1. Install (optional): npm install @avisek_yorkie/cursor-rules
-# 2. Copy rules to your project root
+# 1. Install: npm install -D @avisek_yorkie/cursor-rules
+# 2. Apply rules (creates .cursorrules + .cursor/rules/)
+npx cursor-rules-init
+
+# Or manual copy:
+mkdir -p .cursor/rules
 cp node_modules/@avisek_yorkie/cursor-rules/.cursorrules .
-cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
+cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .cursor/rules/
 
 # 3. Start coding - rules are automatically applied!
 ```
@@ -69,8 +73,9 @@ cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
 cp .cursorrules .cursorrules.backup
 
 # 2. Copy new rules
+mkdir -p .cursor/rules
 cp node_modules/@avisek_yorkie/cursor-rules/.cursorrules .
-cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
+cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .cursor/rules/
 
 # 3. Merge with existing rules if needed
 ```
@@ -78,7 +83,7 @@ cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
 ## 📖 Rule Categories
 
 ### Code Quality
-- **File**: `rules/code-quality.mdc`
+- **File**: `.cursor/rules/code-quality.mdc`
 - **Focus**: Clean code, error handling, security, performance
 - **Key Rules**: 
   - Functions: 20-30 lines (max 50)
@@ -87,7 +92,7 @@ cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
   - No hardcoded secrets
 
 ### Documentation
-- **File**: `rules/documentation.mdc`
+- **File**: `.cursor/rules/documentation.mdc`
 - **Focus**: Code docs, README, API docs, comments
 - **Key Rules**:
   - Document all public APIs
@@ -96,7 +101,7 @@ cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
   - Include code examples
 
 ### Naming Conventions
-- **File**: `rules/naming-conventions.mdc`
+- **File**: `.cursor/rules/naming-conventions.mdc`
 - **Focus**: Variables, functions, classes, files, APIs
 - **Key Rules**:
   - Descriptive names that reveal intent
@@ -175,7 +180,7 @@ These rules work with:
 
 ---
 
-**Package**: `@avisek_yorkie/cursor-rules` (npm) · **Structure**: `rules/` contains the `.mdc` rule files
+**Package**: `@avisek_yorkie/cursor-rules` (npm) · **Installed**: `.cursorrules` in project root, `.cursor/rules/` for `.mdc` files
 
 **Status**: ✅ Ready to use
 

@@ -1,3 +1,8 @@
+---
+description: Documentation standards, README, API docs, and inline comments
+alwaysApply: true
+---
+
 # Documentation Standards - JavaScript/TypeScript
 
 Good documentation is as important as good code. These standards apply to JS/TS projects.

@@ -5,12 +5,14 @@ This file contains comprehensive coding rules that apply to any technology stack
 ## How to Use These Rules
 
 1. Copy this `.cursorrules` file to your project root
-2. Copy the rule files from the `rules/` folder (code-quality.mdc, documentation.mdc, naming-conventions.mdc) to your project root
+2. Copy the rule files into `.cursor/rules/` (code-quality.mdc, documentation.mdc, naming-conventions.mdc)
 3. Cursor will automatically apply these rules when assisting with code
 
 ## Rule Categories
 
-### 1. Code Quality (rules/code-quality.mdc)
+Rules in `.cursor/rules/` are applied automatically.
+
+### 1. Code Quality (.cursor/rules/code-quality.mdc)
 - Clean code standards
 - Error handling
 - Security best practices
@@ -18,14 +20,14 @@ This file contains comprehensive coding rules that apply to any technology stack
 - Code complexity management
 - Testing requirements
 
-### 2. Documentation (rules/documentation.mdc)
+### 2. Documentation (.cursor/rules/documentation.mdc)
 - Code documentation standards
 - README requirements
 - API documentation
 - Architecture documentation
 - Inline comments guidelines
 
-### 3. Naming Conventions (rules/naming-conventions.mdc)
+### 3. Naming Conventions (.cursor/rules/naming-conventions.mdc)
 - Variable and function naming
 - Class and type naming
 - File and directory naming
@@ -133,7 +135,7 @@ Before submitting code, ensure:
 
 To use these rules in a specific project:
 
-1. **Copy the rules**: Copy `.cursorrules` and the `.mdc` files from `rules/` to your project root
+1. **Copy the rules**: Copy `.cursorrules` to project root and the `.mdc` files into `.cursor/rules/`
 2. **Customize if needed**: Add project-specific rules while maintaining these core principles
 3. **Team alignment**: Ensure your team is aware of and follows these rules
 4. **Code reviews**: Use the checklists during code reviews

@@ -18,27 +18,28 @@ npx cursor-rules-init
 
 **Option B – Manual copy:**
 ```bash
+mkdir -p .cursor/rules
 cp node_modules/@avisek_yorkie/cursor-rules/.cursorrules .
-cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
+cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .cursor/rules/
 ```
 
 **From a local clone:**
 ```bash
-# Copy main file and all rule files to your project root
+mkdir -p .cursor/rules
 cp /path/to/cursor-rules/.cursorrules .
-cp /path/to/cursor-rules/rules/*.mdc .
+cp /path/to/cursor-rules/rules/*.mdc .cursor/rules/
 ```
 
 ### Step 2: Verify files are in place
 ```bash
-ls -la .cursorrules *.mdc
+ls -la .cursorrules .cursor/rules/
 ```
 
 You should see:
-- `.cursorrules`
-- `code-quality.mdc`
-- `documentation.mdc`
-- `naming-conventions.mdc`
+- `.cursorrules` (project root)
+- `.cursor/rules/code-quality.mdc`
+- `.cursor/rules/documentation.mdc`
+- `.cursor/rules/naming-conventions.mdc`
 
 ### Step 3: Restart Cursor (optional)
 Close and reopen Cursor to ensure rules are loaded.
@@ -102,8 +103,9 @@ If you update the rules (or upgrade the package), sync them to your project:
 
 ```bash
 # From your project root (when using npm package)
+mkdir -p .cursor/rules
 cp node_modules/@avisek_yorkie/cursor-rules/.cursorrules .
-cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .
+cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .cursor/rules/
 ```
 
 ## ✅ Verification
