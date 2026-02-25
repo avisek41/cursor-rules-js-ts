@@ -272,7 +272,6 @@ All rule styles referenced in the code-quality and related rules, in one place.
 | **DRY** | Don't Repeat Yourself | Extract repeated logic; use configuration over duplication; no copy-paste without refactoring. |
 | **KISS** | Keep It Simple, Stupid | Simple solution > clever; readable > clever; avoid over-engineering. |
 | **YAGNI** | You Aren't Gonna Need It | Build what you need now; don't build for hypotheticals; remove unused code. |
-| **Fail Fast** | — | Validate early at boundaries; fail loudly when something is wrong. |
 
 ### Golden rules (summary)
 
