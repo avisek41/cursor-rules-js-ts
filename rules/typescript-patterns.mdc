@@ -1,170 +1,263 @@
 ---
-description: TypeScript-specific patterns, type safety, utility types, generics, and advanced features
+description: TypeScript-specific patterns — type safety, utility types, generics, discriminated unions, branded types, and advanced features. Always active for TypeScript projects.
 alwaysApply: true
 ---
 
 # TypeScript Best Practices
 
-Apply when writing or reviewing TypeScript. Prefer type-safe, explicit code over `any` and loose types.
+Apply when writing or reviewing TypeScript. Prefer type-safe, explicit code.
 
-**When suggesting TypeScript code, always:** avoid `any` (use `unknown` + type guards); use `interface` for object shapes and `type` for unions; prefer utility types (Partial, Pick, Omit, Record, ReturnType) over hand-rolled types; constrain generics with `extends` when needed; use discriminated unions for multi-shaped state.
+**Core rule:** avoid `any` (use `unknown` + type guards); use `interface` for object shapes, `type` for unions; prefer utility types over hand-rolled types; constrain generics; use discriminated unions for multi-shaped state.
+
+---
+
+## tsconfig — Enable Strict Mode
+
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": true
+  }
+}
+```
+
+- `strict: true` — enables `strictNullChecks`, `noImplicitAny`, and more
+- `noUncheckedIndexedAccess` — array/object index access returns `T | undefined`, not `T`; forces safe handling
+- Fix strict errors; never weaken the config to silence them
 
 ---
 
 ## Type Safety
 
-### Avoid `any`; use `unknown` and type guards
-- **`any`** disables type checking—use only when necessary (e.g. legacy integration, escape hatch with a comment).
-- Prefer **`unknown`** for values you don't yet know; narrow with type guards.
+### Avoid `any` — Use `unknown` + Type Guards
 
 ```typescript
-// ✅ Good - unknown + type guard
+// ✅ unknown + type guard — safe
 function parsePayload(input: unknown): User {
-  if (isUser(input)) return input;
-  throw new Error('Invalid payload');
-}
-function isUser(v: unknown): v is User {
-  return typeof v === 'object' && v !== null && 'id' in v && 'email' in v;
+  if (!isUser(input)) throw new Error('Invalid payload shape');
+  return input;
 }
 
-// ❌ Bad - any
+function isUser(v: unknown): v is User {
+  return (
+    typeof v === 'object' &&
+    v !== null &&
+    'id' in v &&
+    'email' in v &&
+    typeof (v as Record<string, unknown>).id === 'string'
+  );
+}
+
+// ❌ any — disables all type checking
 function parsePayload(input: any): User {
-  return input;
+  return input; // runtime crash waiting to happen
 }
 ```
 
-### Enable strict mode
-- Use **`strict: true`** in `tsconfig.json` (or at least `strictNullChecks`, `noImplicitAny`).
-- Fix strict-mode errors rather than weakening the config.
-
-### Interface vs type
-- **`interface`**: object shapes, extendable, declaration merging. Prefer for public API and object contracts.
-- **`type`**: unions, intersections, mapped types, tuple types, primitives. Use for unions and complex types.
+### Interface vs Type
 
 ```typescript
-// ✅ Interface for object shapes
+// ✅ interface — object shapes, extendable, use for public API contracts
 interface User {
   id: string;
   email: string;
 }
 
-// ✅ Type for unions and complex types
+interface AdminUser extends User {
+  permissions: string[];
+}
+
+// ✅ type — unions, intersections, mapped types, primitives
 type Status = 'pending' | 'success' | 'error';
 type ApiResponse<T> = { data: T } | { error: string };
+type UserId = string; // alias / branded base
 ```
 
-### Discriminated unions for complex state
-- Use a common literal field (`kind`, `type`, `status`) to narrow safely.
+---
+
+## Discriminated Unions
+
+Use a common literal field (`kind`, `type`, `status`) to narrow safely across branches.
 
 ```typescript
-// ✅ Good - discriminated union
-type Result =
-  | { kind: 'ok'; data: User }
-  | { kind: 'error'; message: string };
+type RequestState<T> =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'success'; data: T }
+  | { status: 'error'; message: string };
 
-function handle(result: Result) {
-  if (result.kind === 'ok') {
-    console.log(result.data); // narrowed to { data: User }
-  } else {
-    console.log(result.message); // narrowed to { message: string }
+function renderUser(state: RequestState<User>) {
+  switch (state.status) {
+    case 'idle':    return <Idle />;
+    case 'loading': return <Spinner />;
+    case 'success': return <Profile user={state.data} />; // narrowed: data exists
+    case 'error':   return <ErrorView msg={state.message} />;
+    default:        return assertNever(state); // compile-time exhaustiveness
   }
 }
 ```
 
----
-
-## Utility Types
-
-Use built-in utility types instead of hand-rolling:
-
-| Utility | Use when |
-|---------|----------|
-| **`Partial<T>`** | All properties optional (e.g. updates, overrides). |
-| **`Required<T>`** | All properties required. |
-| **`Readonly<T>`** | Immutable view of an object. |
-| **`Pick<T, K>`** | Subset of keys from T. |
-| **`Omit<T, K>`** | T without certain keys. |
-| **`Record<K, V>`** | Object with known keys and value type (e.g. map string → T). |
-| **`NonNullable<T>`** | Remove null and undefined from T. |
-| **`ReturnType<T>`** | Return type of a function type. |
-| **`Parameters<T>`** | Tuple of a function’s parameter types. |
-| **`Awaited<T>`** | Unwrap Promise (and nested) type. |
+### Exhaustive Switch — `assertNever`
 
 ```typescript
-// Examples
-type UserUpdate = Partial<User>;
-type UserIdOnly = Pick<User, 'id'>;
-type UserWithoutEmail = Omit<User, 'email'>;
-type ApiHandlers = Record<string, (req: Request) => Response>;
-type FnReturn = ReturnType<typeof fetchUser>;
+// Add to a shared utils/types file
+function assertNever(x: never): never {
+  throw new Error(`Unhandled discriminated union case: ${JSON.stringify(x)}`);
+}
+// TypeScript will error at compile time if any case is missing
 ```
 
 ---
 
-## Generics
+## Branded / Nominal Types
 
-- Use generics for **reusable, type-safe** logic (functions, components, hooks).
-- **Constrain** when you need a specific shape: `<T extends { id: string }>`.
-- Keep **few type parameters** (1–2 preferred); more than 3 is a code smell—consider a single object type parameter.
+Prevent mixing structurally identical primitives (e.g. `UserId` vs `OrderId`).
 
 ```typescript
-// ✅ Good - constrained generic
+type Brand<T, B extends string> = T & { readonly _brand: B };
+
+type UserId  = Brand<string, 'UserId'>;
+type OrderId = Brand<string, 'OrderId'>;
+type Euros   = Brand<number, 'Euros'>;
+
+declare function getUser(id: UserId): Promise<User>;
+
+// ✅ Explicit cast required — prevents accidental mixing
+const userId = 'usr_123' as UserId;
+getUser(userId);
+
+// ❌ TypeScript error — OrderId is not assignable to UserId
+const orderId = 'ord_456' as OrderId;
+getUser(orderId);
+
+// Factory functions hide the cast
+function createUserId(raw: string): UserId { return raw as UserId; }
+```
+
+---
+
+## Utility Types — Use Built-ins
+
+```typescript
+type UserUpdate   = Partial<User>;              // all optional (for update payloads)
+type RequiredUser = Required<User>;             // all required
+type ReadonlyUser = Readonly<User>;             // immutable view
+type UserIdOnly   = Pick<User, 'id'>;           // subset
+type PublicUser   = Omit<User, 'passwordHash'>; // exclude sensitive fields
+type RoleMap      = Record<string, User[]>;     // string → T map
+type SafeId       = NonNullable<User['id']>;    // removes null | undefined
+type FnReturn     = ReturnType<typeof fetchUser>;
+type FnParams     = Parameters<typeof fetchUser>;
+type Resolved     = Awaited<ReturnType<typeof fetchUser>>; // unwrap Promise
+```
+
+---
+
+## Generics — Constrained and Minimal
+
+```typescript
+// ✅ Constrained — only accepts objects with id
 function getById<T extends { id: string }>(items: T[], id: string): T | undefined {
   return items.find((item) => item.id === id);
 }
 
-// ✅ Good - single generic, clear purpose
-function first<T>(arr: T[]): T | undefined {
-  return arr[0];
-}
+// ✅ Default type parameter
+function createState<T = unknown>(initial: T) { /* ... */ }
 
-// ❌ Avoid - too many generic parameters
-function mapKeysAndValues<T, K extends keyof T, V>(obj: T, key: K, fn: (v: T[K]) => V): V { ... }
+// ✅ Single generic, clear purpose
+function first<T>(arr: readonly T[]): T | undefined { return arr[0]; }
+
+// ❌ Too many params — smell; consider a single object type param
+function mapKeysAndValues<T, K extends keyof T, V>(obj: T, key: K, fn: (v: T[K]) => V): V { /* */ }
 ```
 
-### Default type parameters
-- Use when a sensible default exists: `<T = unknown>`, `<T = string>`.
+Max 1–2 type parameters; more than 3 is a design problem.
 
 ---
 
 ## Advanced Patterns
 
-### `const` assertions and `as const`
-- Use **`as const`** for literal types and readonly tuples so types are inferred narrowly.
+### `as const` — Literal Types and Readonly Tuples
 
 ```typescript
 const ROUTES = ['home', 'profile', 'settings'] as const;
 type Route = (typeof ROUTES)[number]; // 'home' | 'profile' | 'settings'
+
+const HTTP_METHODS = { GET: 'GET', POST: 'POST', PUT: 'PUT' } as const;
+type HttpMethod = (typeof HTTP_METHODS)[keyof typeof HTTP_METHODS];
 ```
 
-### `satisfies` (TS 4.9+)
-- Use **`satisfies SomeType`** when you want inference to stay narrow but still check against a type.
+### `satisfies` (TS 4.9+) — Validate Without Widening
 
 ```typescript
+// ✅ Stays narrow ('dark') but validated against the shape
 const config = {
   theme: 'dark',
-  count: 10,
-} satisfies { theme: string; count: number };
-// config.theme is 'dark', not just string
+  retries: 3,
+} satisfies { theme: string; retries: number };
+
+config.theme; // type: 'dark' (not string)
 ```
 
-### Readonly and immutability
-- Prefer **`readonly`** for arrays and readonly types for public API when callers must not mutate.
-- Use **`Readonly<T>`** or `readonly` modifier for object/array shapes that shouldn’t change.
+### `import type` — Zero Runtime Cost
 
-### Template literal types
-- Use for string patterns: `` type EventName = `on${Capitalize<string>}` ``.
+```typescript
+// ✅ Always use import type for type-only imports
+import type { User, UserDto } from './types';
+import type { FC, ReactNode } from 'react';
 
-### Avoid non-null assertion (`!`) when possible
-- Prefer explicit checks or optional chaining; use `!` only when you have proven non-null (e.g. after a guard) and document why.
+// ❌ Imports type at runtime (unnecessary bundle cost)
+import { User } from './types';
+```
+
+### Template Literal Types
+
+```typescript
+type EventName  = `on${Capitalize<string>}`;         // onCick, onChange…
+type HttpRoute  = `/${string}`;
+type EnvVar     = `${Uppercase<string>}_${string}`;  // DATABASE_URL, API_KEY…
+```
+
+### Readonly Arrays and Objects
+
+```typescript
+// ✅ Readonly for public API params that must not be mutated
+function processItems(items: readonly User[]): ProcessedUser[] { /* */ }
+
+// ✅ Deep readonly for config/constants
+const CONFIG: Readonly<{ apiUrl: string; timeout: number }> = {
+  apiUrl: 'https://api.example.com',
+  timeout: 5_000,
+};
+```
+
+### Avoid Non-Null Assertion (`!`)
+
+```typescript
+// ❌ Bypasses null checks — runtime crash risk
+const name = user!.profile!.name;
+
+// ✅ Optional chaining + nullish coalescing
+const name = user?.profile?.name ?? 'Guest';
+
+// ✅ Explicit guard
+if (!user?.profile) throw new NotFoundError('Profile', userId);
+const name = user.profile.name;
+```
 
 ---
 
 ## Summary
 
-- **Strict + no `any`**: Prefer `unknown` and type guards.
-- **Interfaces** for object shapes; **types** for unions and complex types.
-- **Discriminated unions** for multi-shaped state.
-- **Utility types** instead of manual mappings.
-- **Constrained generics** with 1–2 parameters; default when helpful.
-- **`as const`** and **`satisfies`** for precise inference.
+- **`strict: true` + `noUncheckedIndexedAccess`** in tsconfig — non-negotiable
+- **No `any`** — use `unknown` + type guards or Zod schemas
+- **`interface`** for object shapes; **`type`** for unions and aliases
+- **Discriminated unions** + **`assertNever`** for exhaustive state modeling
+- **Branded types** for domain primitives (IDs, monetary values, units)
+- **Utility types** — never hand-roll what TS ships built-in
+- **`as const`** and **`satisfies`** for precise inference
+- **`import type`** for all type-only imports

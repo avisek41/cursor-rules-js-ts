@@ -1,70 +1,162 @@
 ---
-description: Documentation standards, README, API docs, and inline comments
-alwaysApply: true
+description: Documentation standards for JS/TS projects — JSDoc for functions and classes, README structure, ADR format, API documentation with OpenAPI, and inline comment guidelines. Activate when user asks to write docs, add comments, document a function, create a README, write an architecture decision record (ADR), or document an API.
+alwaysApply: false
 ---
 
-# Documentation Standards - JavaScript/TypeScript
+# Documentation Standards — JavaScript / TypeScript
 
-Good documentation is as important as good code. These standards apply to JS/TS projects.
-
----
-
-## Core Documentation Principles
-
-### Why Document?
-- **For Future You** - You'll forget why you made decisions
-- **For Your Team** - Others need to understand your code
-- **For New Developers** - Reduce onboarding time
-- **For Users** - If you build an API or library
-
-### What to Document
-✅ **DO Document:**
-- WHY decisions were made
-- Complex algorithms and logic
-- Public APIs and interfaces
-- Setup and installation steps
-- Architecture and design decisions
-- Known limitations and gotchas
-- Examples of usage
-
-❌ **DON'T Document:**
-- Obvious code (let code self-document)
-- Implementation details that might change
-- What the code does (code shows this)
-
-### General Rules
-- Write self-documenting code as the primary documentation
-- Keep documentation close to the code it describes
-- Update documentation when code changes
-- Remove outdated or incorrect documentation
+> **File vs Folder answer:** This rule file (`documentation.mdc`) lives as a **single file** in `.cursor/rules/`. However, the *output* it instructs Cursor to generate follows this structure:
+>
+> ```
+> project-root/
+> ├── README.md                  ← project overview (one file)
+> ├── CHANGELOG.md               ← version history (one file)
+> ├── CONTRIBUTING.md            ← contributor guide (one file)
+> └── docs/
+>     ├── adr/                   ← Architecture Decision Records (folder)
+>     │   ├── 001-database.md
+>     │   └── 002-auth-strategy.md
+>     ├── api/                   ← OpenAPI specs (folder, if not auto-generated)
+>     │   └── openapi.yaml
+>     └── architecture.md        ← system diagram / overview (one file)
+> ```
+>
+> Short-lived decisions and inline function docs live in the code. Long-lived architectural decisions live in `/docs/adr/`.
 
 ---
 
-## README.md - Every Project Needs One
+## Core Principles
 
-### Essential Sections
+**Document WHY, not WHAT.** Code shows what happens. Documentation explains why it was done that way, constraints, trade-offs, and non-obvious behavior.
+
+**Write self-documenting code first.** If code needs a comment to explain *what* it does, rename the function/variable. Comment when even well-named code doesn't explain intent.
+
+✅ **Do document:**
+- Why a decision was made (ADR, inline)
+- Complex algorithms and non-obvious logic
+- Public APIs and exported functions (JSDoc/TSDoc)
+- Known limitations, gotchas, and workarounds
+- Setup, installation, environment prerequisites
+- Breaking changes, deprecation timelines
+
+❌ **Don't document:**
+- Obvious code (`// increment counter` above `count++`)
+- Implementation details likely to change
+- Commented-out code (delete it; it lives in git)
+
+---
+
+## Inline Comments
+
+```typescript
+// ✅ Explains WHY — non-obvious reason
+// Retry with exponential backoff — the payment provider returns 429 under load.
+// Max wait is 32 s; beyond that we surface an error to the user.
+const backoffMs = Math.min(Math.pow(2, retryCount) * 1_000, 32_000);
+
+// ✅ Documents non-obvious order dependency
+// Must run before initializeDatabase() — connection pool has a 5-connection hard limit
+// and the analytics module opens 3 on startup, leaving none for the main service.
+await setupConnectionPool();
+
+// ✅ Explains workaround with external reference
+// HACK: Force repaint to fix Safari 16 layout-shift rendering bug
+// Upstream bug: https://bugs.webkit.org/show_bug.cgi?id=123456
+element.style.display = 'none';
+element.offsetHeight; // intentional — triggers reflow
+element.style.display = '';
+
+// ❌ States the obvious
+// Set count to zero
+const count = 0;
+
+// ❌ Describes what the loop does, not why
+// Loop through users
+for (const user of users) { }
+```
+
+### TODO Comments — Always With Context
+
+```typescript
+// ✅
+// TODO(PROJ-234): Replace with cursor-based pagination once the users
+// table exceeds 1M rows. Current offset approach degrades at ~500k.
+function getUsers(page: number) { }
+
+// ❌
+// TODO: fix this
+function getUsers() { }
+```
+
+---
+
+## JSDoc / TSDoc — Public API Documentation
+
+Document every **exported** function, class, and type. In TypeScript, types carry most of the weight — JSDoc fills in semantics, constraints, and examples.
+
+```typescript
+/**
+ * Calculates the total price including tax and optional discount.
+ *
+ * @param basePrice - Price before tax, in the specified currency. Must be ≥ 0.
+ * @param taxRate   - Tax as a decimal (e.g. `0.08` for 8%). Must be in [0, 1].
+ * @param options   - Optional overrides.
+ * @returns Total price after tax and discount, in the same currency.
+ * @throws {ValidationError} If `basePrice` is negative or `taxRate` is out of range.
+ *
+ * @example
+ * // $100 base, 8% tax, 10% discount → $97.20
+ * const total = calculateTotalPrice(100, 0.08, { discountPercent: 10 });
+ */
+function calculateTotalPrice(
+  basePrice: number,
+  taxRate: number,
+  options: { discountPercent?: number } = {},
+): number { }
+
+/**
+ * Fetches a user by their unique identifier.
+ * Returns `null` if no user exists — does NOT throw for missing users.
+ *
+ * @throws {ApiError} On network failure or unexpected server error (5xx).
+ *
+ * @example
+ * const user = await getUserById('usr_abc123' as UserId);
+ * if (!user) { handle404(); }
+ */
+async function getUserById(id: UserId): Promise<User | null> { }
+```
+
+### What to Include in JSDoc
+- ✅ Brief description of what the function *does* (not how)
+- ✅ Parameter semantics, valid ranges, units
+- ✅ Return value — and distinguish `null` vs `undefined` vs thrown error
+- ✅ Which errors are thrown and when
+- ✅ Example for non-trivial usage
+- ❌ Implementation details
+- ❌ Private helper functions (unless algorithm is complex and non-obvious)
+
+---
+
+## README.md — Every Project Needs One
 
 ```markdown
 # Project Name
 
-Brief description of what this project does (1-2 sentences).
+One or two sentences: what this project does and why it exists.
 
 ## Table of Contents
-- [Features](#features)
+- [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Configuration](#configuration)
+- [Testing](#testing)
 - [Contributing](#contributing)
-- [License](#license)
-
-## Features
-- Feature 1
-- Feature 2
-- Feature 3
 
 ## Prerequisites
-- Node.js 18+
-- (Add: database, API keys, etc.)
+- Node.js 20+
+- PostgreSQL 15+
+- (List any required API keys or external services)
 
 ## Installation
 
@@ -73,344 +165,172 @@ git clone https://github.com/org/project.git
 cd project
 npm install
 cp .env.example .env
-# Edit .env with your configuration
+# Edit .env — all required keys are documented in .env.example
 npm run dev
 \`\`\`
 
 ## Usage
 
 ### Basic Example
-\`\`\`javascript
-const result = doSomething();
+\`\`\`typescript
+import { createClient } from './src/client';
+const client = createClient({ apiKey: process.env.API_KEY });
+const user = await client.users.getById('usr_123');
 \`\`\`
 
-### Advanced Example
-\`\`\`javascript
-const advancedResult = doSomethingComplex({
-  option1: 'value',
-  option2: 123
-});
-\`\`\`
+### Configuration
 
-## Configuration
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| API_URL | API endpoint | http://localhost:3000 |
-| DB_HOST | Database host | localhost |
+| Variable | Description | Required | Default |
+|----------|-------------|----------|---------|
+| `DATABASE_URL` | PostgreSQL connection string | ✅ | — |
+| `API_KEY` | Service API key | ✅ | — |
+| `PORT` | HTTP server port | No | `3000` |
+| `LOG_LEVEL` | `debug` \| `info` \| `warn` \| `error` | No | `info` |
 
 ## Testing
 
 \`\`\`bash
-npm test
-npm run test:integration
-npm run test:e2e
+npm test              # unit tests
+npm run test:int      # integration tests (requires running DB)
+npm run test:e2e      # end-to-end (requires full stack)
+npm run test:coverage # coverage report
 \`\`\`
 
 ## Contributing
-
 See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## License
-
-MIT - See [LICENSE](LICENSE)
+MIT — see [LICENSE](LICENSE)
 ```
 
 ### README Best Practices
-- ✅ Keep it concise but complete
-- ✅ Include code examples (JavaScript/TypeScript)
-- ✅ Update when features change
-- ✅ Add badges (build status, coverage) when applicable
-- ❌ Don't duplicate full API docs (link to them)
-- ❌ Don't include outdated information
-
-### Optional but Recommended
-- **Architecture Overview** - High-level system design
-- **Troubleshooting** - Common issues and solutions
-- **Changelog** - Link to CHANGELOG.md or version history
-- **Roadmap** - Future plans and features
+- Update the README as part of the PR that introduces the change
+- Keep it concise — link to `/docs` for deeper content, don't duplicate it
+- Add CI/coverage badges when the pipeline is stable
+- Include a **Troubleshooting** section once common issues are identified
 
 ---
 
-## Code Comments
+## Architecture Decision Records (ADRs)
 
-### When to Comment
+**When to write an ADR:** any decision that is hard to reverse, has significant trade-offs, or will confuse a future developer who doesn't know the context.
 
-```javascript
-// ✅ GOOD - Explains WHY and complex logic
-// Use exponential backoff to avoid overwhelming the API
-// during rate limit periods. Max wait time is 32 seconds.
-const backoffDelay = Math.min(Math.pow(2, retryCount) * 1000, 32000);
+**Where:** `/docs/adr/NNN-short-title.md` (e.g. `001-postgres-as-primary-db.md`)
 
-// ✅ GOOD - Documents non-obvious behavior
-// Note: This must run before initializeDatabase() due to
-// connection pool limitations in PostgreSQL
-await setupConnectionPool();
-
-// ✅ GOOD - Explains workaround
-// HACK: Force repaint to fix Safari rendering bug
-// See: https://bugs.webkit.org/show_bug.cgi?id=123456
-element.style.display = 'none';
-element.offsetHeight; // Force reflow
-element.style.display = 'block';
-
-// ❌ BAD - States the obvious
-// Set count to zero
-const count = 0;
-
-// ❌ BAD - Redundant comment
-// Loop through users
-for (const user of users) {
-  // ...
-}
-```
-
-### TODO Comments
-
-```javascript
-// ✅ GOOD - TODO with context
-// TODO(PROJ-123): Refactor this to use new caching system
-// Current implementation has O(n²) complexity
-function slowSearch(items, query) {
-  // ...
-}
-
-// ❌ BAD - TODO without context
-// TODO: Fix this
-function doSomething() {
-  // ...
-}
-```
-
-### Comment Formatting
-- **Single-line:** `// Comment text`
-- **Multi-line:** Use `/* ... */` or multiple `//` lines; for JSDoc use `/** ... */`
-
-### Inline Comment Guidelines
-- Explain "why", not "what"
-- Document non-obvious code behavior
-- Include references to issues or external docs (e.g. MDN, GitHub issues)
-- Use TODO comments sparingly and always with context/ticket
-
----
-
-## Function/Method Documentation (JSDoc)
-
-### Document Public APIs
-Document every public and exported function. Use JSDoc for JavaScript; TypeScript can use JSDoc or TSDoc.
-
-```javascript
-/**
- * Calculate the total price including tax and discounts.
- *
- * @param {number} basePrice - The base price before tax
- * @param {number} taxRate - Tax rate as decimal (e.g., 0.08 for 8%)
- * @param {Object} options - Additional options
- * @param {number} options.discount - Discount percentage (0-100)
- * @param {string} options.currency - Currency code (default: 'USD')
- * @returns {number} Total price after tax and discount
- * @throws {Error} If basePrice is negative
- *
- * @example
- * // Calculate price with 8% tax and 10% discount
- * const total = calculateTotal(100, 0.08, { discount: 10 });
- * // Returns: 97.2
- */
-function calculateTotal(basePrice, taxRate, options = {}) {
-  if (basePrice < 0) {
-    throw new Error('Base price cannot be negative');
-  }
-
-  const { discount = 0, currency = 'USD' } = options;
-  const discountedPrice = basePrice * (1 - discount / 100);
-  return discountedPrice * (1 + taxRate);
-}
-```
-
-### With TypeScript Types
-
-```typescript
-/**
- * Fetches a user by ID from the API.
- *
- * @param userId - Unique user identifier
- * @returns The user object or null if not found
- * @throws {ApiError} When the API request fails
- *
- * @example
- * const user = await getUserById('usr_123');
- */
-async function getUserById(userId: string): Promise<User | null> {
-  // implementation
-}
-```
-
-### Documentation Elements to Include
-- ✅ Brief description of what the function does
-- ✅ Parameters with types and descriptions
-- ✅ Return value and type
-- ✅ Exceptions/errors it might throw
-- ✅ Usage examples for non-trivial functions
-- ❌ Implementation details
-- ❌ Private helper functions (unless complex and non-obvious)
-
-### Class/Module Documentation
-- Document the purpose and responsibility of each class/module
-- Document public properties and methods with JSDoc
-- Include usage examples for complex classes
-- Document dependencies and requirements (e.g. peer dependencies)
-
----
-
-## API Documentation
-
-### REST Endpoints
-Document each endpoint with:
-- HTTP method and path
-- Request parameters (query, path, body)
-- Request body schema (e.g. JSON)
-- Response schema and status codes
-- Authentication/authorization requirements
-- Example requests and responses
-- Error responses and status codes
-
-### Tools and Standards
-- Use **OpenAPI (Swagger)** for REST APIs
-- Keep API documentation in sync with code (generate from code or keep specs in version control)
-- Include versioning (e.g. `/v1/users`) and document in README or dedicated API doc
-
----
-
-## Architecture Documentation
-
-### ADR (Architecture Decision Records)
-Document significant decisions in `/docs/adr/` (e.g. `001-postgres-as-primary-db.md`):
+**Numbering:** sequential, never reuse or delete; mark superseded ADRs with status.
 
 ```markdown
-# ADR-001: Use PostgreSQL for Primary Database
+# ADR-001: PostgreSQL as Primary Database
 
 ## Status
-Accepted
+Accepted  <!-- Draft | Accepted | Deprecated | Superseded by ADR-NNN -->
 
 ## Context
-We need a reliable database for storing user data, transactions,
-and analytics. Key requirements:
-- ACID compliance
-- Complex query support
-- Horizontal scalability
-- Strong community support
+We need a primary datastore for user accounts, transactions, and analytics.
+Requirements: ACID compliance, complex query support, strong community, hosted option.
 
 ## Decision
-Use PostgreSQL as our primary database.
+Use PostgreSQL 15 as the primary database.
+Hosted on AWS RDS in the same region as the application servers.
 
 ## Consequences
 
 ### Positive
-- Strong ACID guarantees
-- Excellent JSON support for flexible schemas
-- Mature ecosystem and tooling
-- Great performance for complex queries
+- Strong ACID guarantees — critical for financial transactions
+- Native JSON support for flexible schemas where needed
+- Mature ecosystem: TypeORM, Prisma, pg drivers all well-supported
+- RDS managed backups and failover
 
 ### Negative
-- More complex to scale horizontally than MongoDB
-- Requires schema migrations
-- Steeper learning curve than simpler databases
+- Horizontal write scaling requires sharding (not expected at current scale)
+- Schema migrations needed for structural changes
+- Higher RDS cost vs serverless options
 
 ## Alternatives Considered
-- MongoDB: Too flexible, less data integrity
-- MySQL: Weaker JSON support, less feature-rich
-- DynamoDB: Vendor lock-in, complex pricing
+- **MongoDB** — rejected: schema flexibility is a liability at our data consistency requirements
+- **PlanetScale** — rejected: MySQL dialect gaps with our existing query patterns
+- **DynamoDB** — rejected: vendor lock-in and access pattern constraints
 ```
 
-### System Architecture Diagrams
-Use ASCII or link to diagrams (Mermaid, draw.io, etc.) in markdown:
+---
+
+## API Documentation — REST
+
+Document every endpoint with:
+- HTTP method + path + description
+- Path/query parameters (name, type, required/optional, description)
+- Request body schema (with example)
+- Response schema and all status codes
+- Authentication/authorization requirements
+- Error response shapes
+
+**Use OpenAPI 3.1 (Swagger).** Generate from code annotations where possible (e.g. `@nestjs/swagger`, `fastify-swagger`). Keep the spec in version control at `/docs/api/openapi.yaml`.
+
+```yaml
+# /docs/api/openapi.yaml
+openapi: 3.1.0
+info:
+  title: User Service API
+  version: 1.0.0
+paths:
+  /v1/users/{userId}:
+    get:
+      summary: Get user by ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema: { type: string, pattern: '^usr_[a-z0-9]+$' }
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiError' }
+```
+
+---
+
+## Changelog — `CHANGELOG.md`
+
+Follow [Keep a Changelog](https://keepachangelog.com) format. Use [Semantic Versioning](https://semver.org).
 
 ```markdown
-## System Architecture
+# Changelog
 
-\`\`\`
-┌─────────────┐      ┌──────────────┐      ┌──────────────┐
-│   Client    │─────▶│ API Gateway  │─────▶│   Auth Svc   │
-└─────────────┘      └──────────────┘      └──────────────┘
-                             │
-                             ▼
-                      ┌──────────────┐
-                      │   User Svc    │
-                      └──────────────┘
-                             │
-                             ▼
-                      ┌──────────────┐
-                      │  PostgreSQL  │
-                      └──────────────┘
-\`\`\`
+## [Unreleased]
+
+## [2.1.0] - 2025-04-10
+### Added
+- OAuth2 login via Google and GitHub (#234)
+- Cursor-based pagination on /v1/users (#241)
+
+### Changed
+- `getUserById` now returns `null` instead of throwing `NotFoundError` for missing users
+
+### Deprecated
+- `offset` parameter on /v1/users — use `cursor` instead; will be removed in v3.0.0
+
+## [2.0.0] - 2025-03-01
+### Breaking Changes
+- Response shape for `/v1/orders` changed — see migration guide in docs/migrations/v2.md
 ```
-
-### What to Document
-- System architecture and design decisions
-- Component interactions and data flow
-- Deployment architecture
-- Technology choices and trade-offs
-
----
-
-## Change Documentation
-
-- Document breaking changes prominently (README, CHANGELOG, release notes)
-- Maintain a **CHANGELOG.md** (e.g. Keep a Changelog format)
-- Use **semantic versioning** (MAJOR.MINOR.PATCH)
-- Document migration guides for major changes
-- Include deprecation notices with timelines and alternatives
-
----
-
-## Code Examples in Documentation
-
-- Include working JavaScript/TypeScript examples
-- Keep examples simple and focused
-- Show common use cases and optional configuration
-- Include error handling where relevant
-- Ensure examples run (e.g. via tests or manual verification)
-
----
-
-## Documentation Maintenance
-
-- Review documentation during code reviews
-- Update documentation as part of the development process
-- Remove outdated documentation
-- Keep documentation in version control
-- Use tools (e.g. TypeDoc, ESLint JSDoc rules) to check completeness
-
----
-
-## Documentation Tools (JS/TS)
-
-- **JSDoc** - Inline API docs for JavaScript
-- **TypeDoc** - Generate docs from TypeScript
-- **API docs** - OpenAPI/Swagger for REST APIs
-- **Storybook** - Component documentation for UI libraries (React, Vue, etc.)
 
 ---
 
 ## Documentation Review Checklist
 
-- [ ] All public APIs and exported functions are documented (JSDoc)
-- [ ] README is complete and up-to-date
-- [ ] Code examples are correct and use JS/TS
-- [ ] Installation and prerequisites are accurate
-- [ ] API documentation matches implementation
-- [ ] Breaking changes and CHANGELOG are updated
-- [ ] No outdated or incorrect information
-- [ ] Architecture/ADR docs exist for major decisions
-
----
-
-## Documentation Best Practices
-
-- Write for your audience (developers, users, contributors)
-- Use clear, concise language
-- Include diagrams where helpful
-- Keep documentation organized and navigable (e.g. Table of Contents)
-- Use consistent formatting and style
-- Link related documentation
-- Keep documentation in the repo and up to date
+- [ ] All exported functions and classes have JSDoc
+- [ ] JSDoc includes `@param`, `@returns`, `@throws`, `@example` where applicable
+- [ ] README is complete and matches current setup steps
+- [ ] `.env.example` documents every environment variable
+- [ ] CHANGELOG updated for new features and breaking changes
+- [ ] ADR written for any significant or irreversible architectural decision
+- [ ] API docs updated when endpoints added or changed
+- [ ] No commented-out code; no outdated comments
+- [ ] TODOs include ticket references

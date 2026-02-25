@@ -1,164 +1,83 @@
 ---
-description: Code quality standards, error handling, security, and testing
+description: Core code quality standards — SOLID, DRY, KISS, YAGNI, error handling, security, input validation, and performance. Always active for all TypeScript/JavaScript projects.
 alwaysApply: true
 ---
 
 # Code Quality Standards
 
-These standards apply to the TypeScript/JavaScript ecosystem. Core principles are universal across languages.
+Applies to all TypeScript/JavaScript projects: React, Angular, Node.js, React Native.
 
 ---
 
 ## Core Principles
 
-### SOLID Principles
-- **S**ingle Responsibility: One class/function does one thing
-- **O**pen/Closed: Open for extension, closed for modification
-- **L**iskov Substitution: Subtypes must be substitutable for their base types
-- **I**nterface Segregation: Many specific interfaces > one general interface
-- **D**ependency Inversion: Depend on abstractions, not concretions
+### SOLID
+- **S** — Single Responsibility: one class/function, one reason to change
+- **O** — Open/Closed: open for extension, closed for modification
+- **L** — Liskov Substitution: subtypes must be substitutable for their base types
+- **I** — Interface Segregation: many specific interfaces > one general interface
+- **D** — Dependency Inversion: depend on abstractions, not concretions
 
-### DRY (Don't Repeat Yourself)
-- ✅ Extract repeated logic into reusable functions/classes
-- ✅ Use configuration over duplication
-- ❌ Never copy-paste code without refactoring
+### DRY / KISS / YAGNI
+- Extract repeated logic after the third occurrence ("Rule of Three")
+- Simple solution > clever solution; readable code > smart code
+- Build what you need now — remove unused code immediately
 
-### KISS (Keep It Simple, Stupid)
-- ✅ Simple solution > clever solution
-- ✅ Readable code > clever code
-- ❌ Avoid premature optimization
-- ❌ Don't over-engineer
+### JS/TS-Specific Principles
 
-### YAGNI (You Aren't Gonna Need It)
-- ✅ Build what you need now
-- ❌ Don't build for hypothetical future requirements
-- ❌ Remove unused code immediately
-
-### Additional JS/TS Ecosystem Principles
-
-| Principle | Meaning |
-|-----------|--------|
-| **Composition over inheritance** | Prefer composing small modules/hooks over deep class hierarchies. Especially in React: hooks and components over inheritance. |
-| **Immutability** | Prefer `const`; avoid mutating objects/arrays—use spread, `map`/`filter`/`reduce`, immutable updates. Critical for React state and predictability. |
-| **Explicit over implicit** | No magic: clear types (avoid `any`), explicit params and return types, obvious control flow. APIs should be self-evident. |
-| **Pure functions when possible** | Same inputs → same output; no hidden side effects. Makes code testable and predictable. Isolate I/O at boundaries. |
-| **Single source of truth** | One canonical place for each piece of state (e.g. server state, UI state). Avoid syncing duplicate state. |
-| **Declarative over imperative** | Describe *what* you want (e.g. JSX, declarative UI) rather than step-by-step *how*. Prefer `map` over manual loops when it reads better. |
-| **Principle of least surprise** | APIs and behavior should match what a reasonable developer would expect. Naming and signatures should not surprise. |
-| **Colocate / locality** | Keep related code together: component + styles + tests; route + handler + types. Reduces jumping between files. |
-| **Encapsulation** | Don’t leak implementation details from modules/APIs. Expose a small, stable surface; hide the rest. |
-| **Strict TypeScript** | Use `strict: true`; avoid `any`; prefer `unknown` and type guards when type is uncertain. Types are documentation. |
+| Principle | Rule |
+|-----------|------|
+| **Composition over inheritance** | Prefer hooks/modules over deep class hierarchies |
+| **Immutability** | `const` by default; spread/map/filter over mutation |
+| **Explicit over implicit** | Clear types, no magic, obvious control flow |
+| **Pure functions** | Same input → same output; isolate side effects at boundaries |
+| **Single source of truth** | One canonical place per piece of state |
+| **Least surprise** | APIs should behave exactly as a reasonable dev expects |
+| **Encapsulation** | Small, stable public surface; hide implementation details |
 
 ---
 
 ## Code Structure
 
-### Function/Method Length
-- **Maximum 50 lines** per function/method (ideally 20-30)
-- If longer, break into smaller functions
-- Each function should do ONE thing
+### Size Limits
+- **Functions**: max 50 lines (aim for 20–30); one function = one responsibility
+- **Files**: max 300–500 lines; split when larger
+- **Nesting**: max 3 levels deep — use early returns to flatten
 
-### File Length
-- **Maximum 300-500 lines** per file
-- If longer, split into multiple files
-- Group related functionality
-
-### Code Organization
-- Separate concerns: business logic, data access, presentation, utilities
-- Use consistent file and folder structure
-- Keep imports organized: external libraries first, then internal modules
-- Remove unused imports, variables, and code
-
-### Nesting Depth
-- **Maximum 3 levels** of nesting
-- Use early returns to reduce nesting
-- Extract nested logic into separate functions
-
-```javascript
-// ✅ Good - Early return
-function processUser(user) {
+```typescript
+// ✅ Early return (flat)
+function processUser(user: User | null): ProcessedUser | null {
   if (!user) return null;
   if (!user.active) return null;
-
+  if (!user.hasPermission) return null;
   return processActiveUser(user);
 }
 
-// ❌ Bad - Deep nesting
-function processUser(user) {
+// ❌ Deep nesting
+function processUser(user: User | null) {
   if (user) {
     if (user.active) {
-      if (user.hasPermission) {
-        // deeply nested logic
-      }
+      if (user.hasPermission) { /* buried logic */ }
     }
   }
 }
 ```
 
 ### Cyclomatic Complexity
-- **Maximum complexity of 10** per function
-- Reduce complexity by: breaking into smaller functions, using early returns, extracting conditional logic
+- Max 10 per function — reduce via early returns, extracted helpers, or lookup tables
 
----
-
-## Naming Conventions
-
-See `naming-conventions.mdc` for full details. Summary:
-
-### General Rules
-- ✅ Use descriptive, meaningful names that reveal intent
-- ❌ Avoid abbreviations (unless universal like `id`, `url`, `http`)
-- ❌ No single-letter variables (except loop counters `i`, `j`, `k`)
-
-### Functions/Methods
-- Use verbs: `getUserData()`, `calculateTotal()`, `validateEmail()`
-- Boolean functions: `isActive()`, `hasPermission()`, `canEdit()`
-
-### Variables
-- Use nouns: `userData`, `totalPrice`, `emailAddress`
-- Boolean variables: `isActive`, `hasPermission`, `canEdit`
-
-### Constants
-- Use UPPERCASE_WITH_UNDERSCORES: `MAX_RETRY_ATTEMPTS`, `API_BASE_URL`
-
-```javascript
-// ✅ Good Names
-const userAge = 25;
-const isAdult = userAge >= 18;
-function calculateTotalPrice(items) { }
-function validateEmailAddress(email) { }
-
-// ❌ Bad Names
-const x = 25;
-const flag = true;
-function calc(i) { }
-function do() { }
-```
-
----
-
-## Comments
-
-### When to Comment
-- ✅ WHY something is done (not WHAT)
-- ✅ Complex algorithms that need explanation
-- ✅ Workarounds or non-obvious solutions
-- ✅ TODOs with ticket references
-
-### When NOT to Comment
-- ❌ Obvious code (code should be self-documenting)
-- ❌ Redundant comments that repeat the code
-- ❌ Commented-out code (delete it; it's in git history)
-
-```javascript
-// ✅ Good Comment - Explains WHY
-// Retry 3 times to handle transient network failures
-// as recommended by the API provider
-const MAX_RETRIES = 3;
-
-// ❌ Bad Comment - States the obvious
-// Set the count to zero
-const count = 0;
+### Import Organization
+```typescript
+// 1. Node built-ins
+import { readFile } from 'node:fs/promises';
+// 2. External packages
+import { z } from 'zod';
+// 3. Internal absolute (@/)
+import { UserService } from '@/services/user-service';
+// 4. Relative
+import { formatDate } from '../utils/date';
+// 5. Type-only imports last (or co-located above, always import type)
+import type { UserDto } from './types';
 ```
 
 ---
@@ -167,274 +86,153 @@ const count = 0;
 
 ### Never Fail Silently
 
-```javascript
-// ❌ Bad - Swallows errors
+```typescript
+// ❌ Swallows the error
 try {
-  riskyOperation();
+  await riskyOperation();
+} catch (_err) {}
+
+// ✅ Handle or propagate
+try {
+  await riskyOperation();
 } catch (error) {
-  // Silent failure
+  logger.error('riskyOperation failed', { error, context });
+  throw new AppError('Operation failed', 'OPERATION_FAILED', 500);
+}
+```
+
+### Custom Error Hierarchy
+
+```typescript
+class AppError extends Error {
+  constructor(
+    message: string,
+    public readonly code: string,
+    public readonly statusCode: number = 500,
+  ) {
+    super(message);
+    this.name = 'AppError';
+  }
 }
 
-// ✅ Good - Handles errors
-try {
-  riskyOperation();
-} catch (error) {
-  logger.error('Failed to execute risky operation', error);
-  notifyErrorTracking(error);
-  showUserFriendlyError();
+class NotFoundError extends AppError {
+  constructor(resource: string, id: string) {
+    super(`${resource} with id "${id}" not found`, 'NOT_FOUND', 404);
+  }
+}
+
+class ValidationError extends AppError {
+  constructor(message: string) {
+    super(message, 'VALIDATION_ERROR', 400);
+  }
+}
+```
+
+### Result Type — For Expected Failures
+
+```typescript
+// Use for operations that can predictably fail (parsing, validation, external calls)
+// Use throw/try-catch for unexpected/exceptional failures
+type Result<T, E = AppError> =
+  | { ok: true; value: T }
+  | { ok: false; error: E };
+
+async function parseUserPayload(raw: unknown): Promise<Result<User>> {
+  const parsed = UserSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { ok: false, error: new ValidationError(parsed.error.message) };
+  }
+  return { ok: true, value: parsed.data };
 }
 ```
 
 ### Fail Fast
-- ✅ Validate inputs early at function boundaries
-- ✅ Throw errors immediately when something is wrong
-- ❌ Don't let invalid data propagate through the system
-
-### Specific Error Messages
-
-```javascript
-// ❌ Bad - Generic error
-throw new Error('Error occurred');
-
-// ✅ Good - Specific error
-throw new Error('User with ID 123 not found in database');
-```
-
-### General Rules
-- Use appropriate error types for different scenarios
-- Log errors with context (no sensitive data)
-- Use try-catch where exceptions can occur
+- Validate inputs at function/module boundaries — never let invalid data propagate
+- Use Zod (or equivalent) for runtime validation at I/O boundaries (API, env, external data)
 
 ---
 
-## Input Validation
-- Validate all inputs at function boundaries
-- Check for null/undefined/empty values
-- Validate data types and ranges
-- Sanitize user inputs to prevent injection attacks
-- Return clear validation error messages
+## Magic Values — Never
 
----
-
-## Code Duplication
-
-### The Rule of Three
-1. First time: Write it
-2. Second time: Copy it (reluctantly)
-3. Third time: Refactor it into a reusable function
-
-### Extract Common Logic
-
-```javascript
-// ❌ Bad - Duplicated validation
-function createUser(data) {
-  if (!data.email || !data.email.includes('@')) {
-    throw new Error('Invalid email');
-  }
-  // create user
-}
-
-function updateUser(data) {
-  if (!data.email || !data.email.includes('@')) {
-    throw new Error('Invalid email');
-  }
-  // update user
-}
-
-// ✅ Good - Extracted validation
-function validateEmail(email) {
-  if (!email || !email.includes('@')) {
-    throw new Error('Invalid email');
-  }
-}
-
-function createUser(data) {
-  validateEmail(data.email);
-  // create user
-}
-
-function updateUser(data) {
-  validateEmail(data.email);
-  // update user
-}
-```
-
----
-
-## Magic Numbers and Strings
-
-### Never Use Magic Values
-
-```javascript
-// ❌ Bad - Magic numbers
+```typescript
+// ❌
 if (user.age > 18) { }
-setTimeout(callback, 5000);
+setTimeout(fn, 5000);
 
-// ✅ Good - Named constants
-const ADULT_AGE = 18;
-const TIMEOUT_MS = 5000;
-
-if (user.age > ADULT_AGE) { }
-setTimeout(callback, TIMEOUT_MS);
+// ✅
+const ADULT_AGE_YEARS = 18;
+const SESSION_TIMEOUT_MS = 5_000;
+if (user.age > ADULT_AGE_YEARS) { }
+setTimeout(fn, SESSION_TIMEOUT_MS);
 ```
-
-- Replace magic strings with constants or enums
-- Use configuration for environment-specific values
-- Group related constants together
 
 ---
 
 ## Function Parameters
 
-### Maximum 3-4 Parameters
-- If more parameters needed, use a configuration object
+```typescript
+// ❌ Too many positional params
+function createUser(name: string, email: string, age: number, role: string, dept: string) {}
 
-```javascript
-// ❌ Bad - Too many parameters
-function createUser(name, email, age, address, phone, role, department) {
-  // ...
+// ✅ Config object — named, extensible, order-independent
+interface CreateUserParams {
+  name: string;
+  email: string;
+  age: number;
+  role: string;
+  department: string;
 }
-
-// ✅ Good - Configuration object
-function createUser(config) {
-  const { name, email, age, address, phone, role, department } = config;
-  // ...
-}
-
-createUser({
-  name: 'John Doe',
-  email: 'john@example.com',
-  age: 30,
-  // ...
-});
+function createUser({ name, email, age, role, department }: CreateUserParams) {}
 ```
 
----
-
-## Code Smells to Avoid
-
-| Smell | Rule | Solution |
-|-------|------|----------|
-| **Long Parameter Lists** | More than 4 parameters | Use configuration object |
-| **Large Classes/Files** | More than 500 lines | Split into smaller modules |
-| **Feature Envy** | Function accessing another's data more than its own | Move logic to where the data lives |
-| **Data Clumps** | Same group of variables appearing together | Create a class/object to group them |
-| **Divergent Change** | One class changed for different reasons | Split into separate classes |
-| **Shotgun Surgery** | One change requires modifying many classes | Consolidate related changes into one place |
+Max 3–4 positional params; use a config object beyond that.
 
 ---
 
-## Security Best Practices
-- Never hardcode secrets, API keys, or credentials
-- Use environment variables for configuration
-- Validate and sanitize all user inputs
-- Use parameterized queries to prevent SQL injection
-- Implement proper authentication and authorization
-- Follow principle of least privilege
-- Keep dependencies updated to avoid vulnerabilities
+## Security Checklist
+- Never hardcode secrets, API keys, or credentials — use environment variables
+- Validate and sanitize all user inputs (never trust the client)
+- Use parameterized queries — never string-concatenate SQL/queries
+- Implement proper authentication and authorization checks
+- Principle of least privilege for all service accounts and roles
+- Keep dependencies updated (`npm audit` in CI)
 
 ---
 
-## Testing
-
-### Write Testable Code
-- ✅ Small, focused functions
-- ✅ Inject dependencies (don't hardcode)
-- ✅ Avoid global state
-- ✅ Pure functions when possible
-
-### Test Coverage
-- ✅ Aim for 80%+ code coverage
-- ✅ Focus on business logic
-- ✅ Test edge cases and error paths
-- ✅ Include unit tests, integration tests
-- Keep tests simple and focused
+## Performance — Profile First
+- Write clean, readable code first; optimize only when metrics justify it
+- Avoid unnecessary computations inside loops
+- Minimize database queries and API calls (batch, cache, paginate)
+- Use lazy loading / code splitting at route/feature boundaries
+- Profile before adding `useMemo`, `useCallback`, or caching — they add complexity
 
 ---
 
-## Performance
+## Code Smells to Eliminate
 
-### Premature Optimization is Bad
-- ✅ Write clean, readable code first
-- ✅ Optimize only when you have performance metrics
-- ❌ Don't sacrifice readability for minor performance gains
-
-### When to Optimize
-- After profiling identifies bottlenecks
-- When performance impacts user experience
-- When costs (server, bandwidth) are high
-
-### General
-- Use efficient algorithms and data structures
-- Minimize database queries and API calls
-- Cache appropriately when beneficial
-- Avoid unnecessary computations in loops
-- Use lazy loading when appropriate
-
----
-
-## Refactoring Guidelines
-- Refactor when code smells are detected
-- Improve code incrementally
-- Don't refactor and add features in the same commit
-- Ensure tests pass before and after refactoring
-- Refactor in small, safe steps
-
----
-
-## Code Metrics to Monitor
-- Cyclomatic complexity
-- Code duplication percentage
-- Test coverage percentage
-- Number of dependencies
-- File and function size
-- Technical debt indicators
+| Smell | Signal | Fix |
+|-------|--------|-----|
+| Long parameter lists | > 4 params | Config object |
+| Feature envy | Function accesses another module's data more than its own | Move logic to where data lives |
+| Data clumps | Same vars always appear together | Create a type/object |
+| Shotgun surgery | One change requires editing many files | Consolidate |
+| Dead code | Commented-out or unreachable code | Delete it (git has history) |
+| God object | One class/file does everything | Split by responsibility |
 
 ---
 
 ## Code Review Checklist
 
-Before submitting code for review, verify:
+Before submitting a PR, verify:
 
-- [ ] Code follows naming conventions
-- [ ] No duplicated code
-- [ ] Functions are small and focused
-- [ ] No magic numbers or strings
-- [ ] Errors are handled properly (never fail silently)
-- [ ] Code is self-documenting
-- [ ] Comments explain WHY, not WHAT
-- [ ] Tests are included and passing
-- [ ] No commented-out code
-- [ ] No stray console.log (use proper logging)
-- [ ] No hardcoded values (use constants/config)
-- [ ] Input validation is present at boundaries
-- [ ] No security vulnerabilities
-- [ ] No unused imports or dead code
-
----
-
-## JavaScript/TypeScript Guidelines
-- Use strict mode
-- Prefer `const` over `let`, avoid `var`
-- Use arrow functions for callbacks
-- Avoid `==`, always use `===`
-- Use async/await over promise chains
-- Handle promise rejections properly
-
----
-
-## Summary: The Golden Rules
-
-1. **Readability > Cleverness** - Code is read 10x more than written
-2. **Simple > Complex** - The simplest solution is usually the best
-3. **DRY** - Don't Repeat Yourself
-4. **YAGNI** - You Aren't Gonna Need It
-5. **Fail Fast** - Validate early, fail loudly
-6. **Test Your Code** - If you can't test it, refactor it
-7. **Small Functions** - One function, one responsibility
-8. **Meaningful Names** - Names should reveal intent
-9. **Handle Errors** - Never fail silently
-10. **Delete Code** - Dead code should be removed, not commented out
-11. **Composition over Inheritance** - Compose small pieces; avoid deep hierarchies (especially in React)
-12. **Immutability** - Prefer `const` and immutable updates; avoid hidden mutation
-13. **Explicit over Implicit** - Clear types and APIs; no magic; avoid `any`
+- [ ] Functions ≤ 50 lines, files ≤ 500 lines
+- [ ] No magic numbers or strings — all named constants
+- [ ] Errors handled (never silent), specific messages
+- [ ] Input validation at boundaries
+- [ ] No duplicated logic (Rule of Three applied)
+- [ ] No unused imports, variables, or dead code
+- [ ] No stray `console.log` — use structured logger
+- [ ] No hardcoded config or secrets
+- [ ] TypeScript: no `any`, explicit types on public APIs
+- [ ] Tests included for new logic
+- [ ] No unrelated legacy code refactored in same PR

@@ -1,296 +1,279 @@
 ---
-description: Naming conventions for variables, types, files, and APIs
-alwaysApply: true
+description: Naming conventions for variables, functions, classes, constants, files, database tables/columns, REST endpoints, and environment variables. Activate when naming is unclear, when reviewing names, when scaffolding new files, or when user asks how to name something.
+alwaysApply: false
 ---
 
 # Naming Conventions
 
-## General Naming Principles
+> **Core rule:** names should reveal intent. A reader should understand what a thing *is* or *does* without reading its implementation.
 
-### 1. Core Principles
-- Use descriptive names that reveal intent
-- Avoid abbreviations unless they are widely understood
-- Use consistent naming patterns throughout the codebase
+---
+
+## General Principles
+
+- Use descriptive names from the **problem domain**
 - Prefer longer, clearer names over short, cryptic ones
-- Use names from the problem domain
-- Avoid misleading names
+- Avoid abbreviations unless universally understood (`id`, `url`, `api`, `http`, `db`)
+- Avoid generic names: `data`, `info`, `temp`, `value`, `obj`, `arr`, `result`
+- Never use misleading names (a function named `getUser` that deletes a user)
+- Be consistent — same concept = same name across the codebase
 
-### 2. Variable Naming
+---
 
-#### General Rules:
-- Use nouns or noun phrases for variables
-- Be specific, not generic (avoid `data`, `info`, `temp`, `value`)
-- Use singular for single items, plural for collections
-- Use meaningful prefixes/suffixes when helpful
-
-#### Good Examples:
-```javascript
-const userEmail = "user@example.com";
-const activeUsers = [];
-const isAuthenticated = true;
-const maxRetryAttempts = 3;
-const customerOrderTotal = 100.50;
-```
-
-#### Bad Examples:
-```javascript
-const data = "user@example.com";
-const arr = [];
-const flag = true;
-const num = 3;
-const temp = 100.50;
-```
-
-### 3. Function/Method Naming
-
-#### General Rules:
-- Use verbs or verb phrases for functions
-- Start with action words: `get`, `set`, `create`, `delete`, `update`, `calculate`, `validate`, `is`, `has`, `can`
-- Be specific about what the function does
-- Use consistent verb prefixes for similar operations
-
-#### Good Examples:
-```javascript
-function getUserById(id) { }
-function calculateTotalPrice(items) { }
-function isValidEmail(email) { }
-function hasPermission(user, permission) { }
-function createUserAccount(userData) { }
-function deleteExpiredSessions() { }
-```
-
-#### Bad Examples:
-```javascript
-function process(data) { }
-function doStuff() { }
-function check(x) { }
-function handle() { }
-function run() { }
-```
-
-### 4. Class/Type Naming
-
-#### General Rules:
-- Use nouns or noun phrases
-- Use PascalCase for class names
-- Be specific and descriptive
-- Avoid generic names like `Manager`, `Handler`, `Processor`
-
-#### Good Examples:
-```javascript
-class UserAccount { }
-class EmailValidator { }
-class PaymentProcessor { }
-class DatabaseConnection { }
-class OrderService { }
-```
-
-#### Bad Examples:
-```javascript
-class Manager { }
-class Handler { }
-class Processor { }
-class Helper { }
-class Utils { }
-```
-
-### 5. Constant Naming
-
-#### General Rules:
-- Use UPPER_SNAKE_CASE for constants
-- Use descriptive names that explain the value
-- Group related constants together
-- Use constants for magic numbers and strings
-
-#### Good Examples:
-```javascript
-const MAX_RETRY_ATTEMPTS = 3;
-const DEFAULT_TIMEOUT_MS = 5000;
-const API_BASE_URL = "https://api.example.com";
-const SUPPORTED_FILE_TYPES = ["jpg", "png", "gif"];
-```
-
-#### Bad Examples:
-```javascript
-const max = 3;
-const timeout = 5000;
-const url = "https://api.example.com";
-const types = ["jpg", "png", "gif"];
-```
-
-### 6. Boolean Naming
-
-#### General Rules:
-- Use prefixes: `is`, `has`, `can`, `should`, `will`, `did`
-- Use positive boolean names (avoid `isNot`, `hasNo`)
-- Be specific about what the boolean represents
-
-#### Good Examples:
-```javascript
-const isAuthenticated = true;
-const hasPermission = false;
-const canEdit = true;
-const shouldRetry = false;
-const isEmpty = true;
-const isActive = false;
-```
-
-#### Bad Examples:
-```javascript
-const authenticated = true; // unclear if it's a boolean
-const permission = false;
-const edit = true;
-const notEmpty = false; // use positive names
-const flag = true;
-```
-
-### 7. File and Directory Naming
-
-#### General Rules:
-- Use kebab-case for file and directory names
-- Use descriptive names that indicate content
-- Match file names to their primary export (if applicable)
-- Use consistent naming patterns across the project
-
-#### Good Examples:
-```
-user-service.ts
-email-validator.js
-payment-processor.ts
-user-account.component.tsx
-api-client.ts
-```
-
-#### Bad Examples:
-```
-service.ts
-validator.js
-processor.ts
-component.tsx
-```
-
-### 8. TypeScript/JavaScript Conventions
-
-- **Variables/Functions**: camelCase
-- **Classes/Interfaces/Types**: PascalCase
-- **Constants**: UPPER_SNAKE_CASE
-- **Files**: kebab-case
-- **Private members**: prefix with underscore `_privateMethod()`
+## Variables
 
 ```typescript
-const userName = "John";
-function getUserData() { }
-class UserService { }
-const MAX_RETRIES = 3;
-interface UserAccount { }
+// ✅ Specific nouns / noun phrases
+const userEmail         = 'user@example.com';
+const activeUsers       = [];
+const maxRetryAttempts  = 3;
+const customerOrderTotal = 100.50;
+
+// ❌ Generic / cryptic
+const data  = 'user@example.com';
+const arr   = [];
+const num   = 3;
+const temp  = 100.50;
 ```
 
-### 9. Database Naming
+- **Singular** for single items; **plural** for collections
+- **Boolean** variables: prefix with `is`, `has`, `can`, `should`, `will`, `did`
 
-#### Tables:
-- Use plural nouns: `users`, `orders`, `products`
-- Use snake_case: `user_accounts`, `order_items`
+```typescript
+// ✅
+const isAuthenticated  = true;
+const hasPermission    = false;
+const canEdit          = true;
+const shouldRetry      = false;
+const isEmpty          = true;
 
-#### Columns:
-- Use snake_case: `user_id`, `created_at`, `email_address`
-- Use descriptive names: `first_name` not `fname`
-- Use consistent suffixes: `_id` for foreign keys, `_at` for timestamps
-
-#### Indexes:
-- Use descriptive names: `idx_users_email`, `idx_orders_user_id`
-
-### 10. API Naming
-
-#### REST Endpoints:
-- Use nouns, not verbs: `/users` not `/getUsers`
-- Use plural nouns: `/users` not `/user`
-- Use kebab-case or camelCase consistently
-- Use nested resources: `/users/123/orders`
-- Use query parameters for filtering: `/users?status=active`
-
-#### Good Examples:
-```
-GET /users
-GET /users/123
-POST /users
-PUT /users/123
-DELETE /users/123
-GET /users/123/orders
-GET /users?status=active&limit=10
+// ❌ — ambiguous, not clearly boolean
+const authenticated    = true;
+const permission       = false;
+const notEmpty         = false; // use positive names
 ```
 
-#### Bad Examples:
+---
+
+## Functions and Methods
+
+- Use **verb** or **verb phrase**: `get`, `set`, `fetch`, `create`, `delete`, `update`, `calculate`, `validate`, `build`, `parse`, `format`, `handle`, `process`
+- Boolean functions: `is`, `has`, `can`
+
+```typescript
+// ✅
+function getUserById(id: UserId): Promise<User> {}
+function calculateTotalPrice(items: CartItem[]): Euros {}
+function isValidEmail(email: string): boolean {}
+function hasPermission(user: User, action: Action): boolean {}
+function createUserAccount(data: CreateUserDto): Promise<User> {}
+function deleteExpiredSessions(): Promise<void> {}
+function formatCurrency(amount: Euros, locale: string): string {}
+
+// ❌
+function process(data: unknown) {}
+function doStuff() {}
+function check(x: string) {}
+function handle() {}
+function run() {}
 ```
-GET /getUsers
-GET /user
+
+---
+
+## Classes, Interfaces, Types, Enums
+
+- **PascalCase** for all
+- Use **nouns or noun phrases** — specific, not generic
+- Avoid `Manager`, `Handler`, `Processor`, `Helper`, `Utils` as standalone names — they reveal nothing about responsibility
+
+```typescript
+// ✅
+class UserAccountService {}
+class EmailValidator {}
+class PaymentGatewayClient {}
+class DatabaseConnectionPool {}
+
+interface UserRepository {}
+interface EmailNotifier {}
+
+type AuthStatus = 'authenticated' | 'guest' | 'expired';
+type ApiResponse<T> = { data: T } | { error: string };
+
+enum Permission { Read = 'READ', Write = 'WRITE', Admin = 'ADMIN' }
+
+// ❌
+class Manager {}
+class Handler {}
+class Helper {}
+class Utils {}
+```
+
+---
+
+## Constants
+
+```typescript
+// ✅ UPPER_SNAKE_CASE — clearly a constant, not a variable
+const MAX_RETRY_ATTEMPTS  = 3;
+const DEFAULT_TIMEOUT_MS  = 5_000;
+const API_BASE_URL        = 'https://api.example.com';
+const SUPPORTED_LOCALES   = ['en', 'fr', 'de'] as const;
+
+// ❌
+const maxRetries = 3;
+const timeout    = 5000;
+const url        = 'https://api.example.com';
+```
+
+---
+
+## File and Directory Naming
+
+| Content | Convention | Example |
+|---------|-----------|---------|
+| Utilities / services | `kebab-case.ts` | `user-service.ts`, `email-validator.ts` |
+| React components | `PascalCase.tsx` | `UserProfile.tsx`, `OrderSummary.tsx` |
+| React hooks | `useKebab-case.ts` | `use-auth.ts` OR `useAuth.ts` (pick one, be consistent) |
+| Tests | Mirror source file | `user-service.test.ts`, `UserProfile.test.tsx` |
+| Types / interfaces | `kebab-case.types.ts` | `user.types.ts` |
+| Constants | `kebab-case.constants.ts` | `api.constants.ts` |
+| Index/barrel | `index.ts` | Public API of a module |
+
+- File name should match its **primary export**
+- One component / one class per file (except co-located small helpers)
+
+---
+
+## TypeScript / JavaScript Case Summary
+
+| Construct | Case | Example |
+|-----------|------|---------|
+| Variables | camelCase | `userName`, `isActive` |
+| Functions | camelCase | `getUserById()` |
+| Classes | PascalCase | `UserService` |
+| Interfaces | PascalCase | `UserRepository` |
+| Type aliases | PascalCase | `ApiResponse<T>` |
+| Enums | PascalCase (keys: PascalCase or UPPER) | `Permission.Read` |
+| Constants | UPPER_SNAKE_CASE | `MAX_RETRIES` |
+| Files (non-component) | kebab-case | `user-service.ts` |
+| Files (components) | PascalCase | `UserProfile.tsx` |
+
+### Private Members — Modern TS
+```typescript
+class UserService {
+  // ✅ TypeScript private keyword — compile-time enforcement
+  private readonly apiClient: ApiClient;
+
+  // ✅ ECMAScript # private fields — true runtime privacy
+  #cache = new Map<string, User>();
+
+  // ❌ Underscore prefix — legacy convention, offers no actual privacy
+  _privateMethod() {} // avoid in new code
+}
+```
+
+---
+
+## Database Naming
+
+### Tables
+- **Plural nouns**, `snake_case`: `users`, `order_items`, `audit_logs`
+
+### Columns
+- `snake_case`, descriptive: `first_name`, `created_at`, `email_address`
+- Consistent suffixes: `_id` for foreign keys, `_at` for timestamps, `_count` for counts
+
+### Indexes
+- `idx_{table}_{column(s)}`: `idx_users_email`, `idx_orders_user_id_created_at`
+
+---
+
+## REST API Endpoints
+
+```
+# ✅ Nouns, plural, kebab-case, versioned
+GET    /v1/users
+GET    /v1/users/:userId
+POST   /v1/users
+PATCH  /v1/users/:userId
+DELETE /v1/users/:userId
+GET    /v1/users/:userId/orders
+GET    /v1/users?status=active&limit=20&cursor=xxx
+
+# ❌
+GET  /getUsers
+GET  /user
 POST /createUser
-GET /userOrders/123
-GET /users?Status=Active
+GET  /userOrders/:id
 ```
 
-### 11. Configuration Naming
+- Use `PATCH` for partial updates, `PUT` for full replacement
+- Use `cursor`-based pagination over `offset` for large datasets
+- Query params for filtering/sorting/pagination — path params for resource identity
 
-#### Environment Variables:
-- Use UPPER_SNAKE_CASE
-- Use descriptive prefixes: `DB_`, `API_`, `APP_`
-- Be specific about the purpose
+---
 
-#### Good Examples:
-```
-DATABASE_URL
-API_KEY
-APP_ENVIRONMENT
-MAX_CONNECTION_POOL_SIZE
-REDIS_HOST
-```
+## Environment Variables
 
-#### Bad Examples:
-```
-db_url
-apiKey
-env
-max
-redis
+```bash
+# ✅ UPPER_SNAKE_CASE, descriptive prefix
+DATABASE_URL=postgres://...
+DATABASE_POOL_SIZE=10
+API_KEY=sk-...
+APP_ENVIRONMENT=production
+REDIS_HOST=localhost
+STRIPE_WEBHOOK_SECRET=whsec_...
+
+# ❌
+db_url=postgres://...
+apiKey=sk-...
+env=production
 ```
 
-### 12. Test Naming
+---
 
-#### Test Functions:
-- Use descriptive names that explain what is being tested
-- Follow pattern: `test_<what>_<condition>_<expected_result>` or `should_<expected_behavior>_when_<condition>`
+## Test Naming
 
-#### Good Examples:
-```javascript
-test("should return user when valid id is provided")
-test("should throw error when email is invalid")
-test("should calculate total price correctly with tax")
+```typescript
+// Pattern: it('should <expected behavior> when <condition>')
+describe('UserService', () => {
+  describe('getUserById', () => {
+    it('should return the user when a valid id is provided')
+    it('should return null when no user matches the id')
+    it('should throw NotFoundError when id format is invalid')
+  });
+});
+
+// ❌
+test('user test')
+test('test1')
+test('works correctly')
 ```
 
-#### Bad Examples:
-```javascript
-test("user test")
-test("test1")
-test("function works")
-```
+---
 
-### 13. Naming Anti-Patterns to Avoid
+## Anti-Patterns to Avoid
 
-- **Single letter variables**: Only acceptable in loops (`i`, `j`, `k`) or mathematical contexts
-- **Abbreviations**: Avoid unless universally understood (`id`, `url`, `api`)
-- **Generic names**: `data`, `info`, `temp`, `value`, `obj`, `arr`
-- **Misleading names**: Names that don't match what they do
-- **Hungarian notation**: Avoid type prefixes (`strName`, `intCount`)
-- **Inconsistent casing**: Mixing camelCase and snake_case in the same context
-- **Names that differ only by case**: `user` vs `User` in the same scope
+| Anti-pattern | Example | Fix |
+|-------------|---------|-----|
+| Single letters | `x`, `y`, `n` | Only `i`, `j`, `k` in loops |
+| Abbreviations | `usr`, `mgr`, `cfg` | `user`, `manager`, `config` |
+| Generic nouns | `data`, `info`, `value` | `userData`, `configValue` |
+| Hungarian notation | `strName`, `intCount` | `name`, `count` |
+| Differs only by case | `user` + `User` in same scope | rename one |
+| Negative booleans | `isNotEmpty`, `hasNoPermission` | `isEmpty`, `hasPermission` |
+| Misleading names | `getUser()` that also mutates | `fetchAndCacheUser()` |
 
-### 14. Naming Review Checklist
-- [ ] Names are descriptive and reveal intent
-- [ ] No abbreviations unless widely understood
-- [ ] Consistent naming patterns throughout
-- [ ] Boolean names use appropriate prefixes (`is`, `has`, `can`)
-- [ ] Function names use action verbs
-- [ ] Class names are nouns
-- [ ] Constants are in UPPER_CASE
-- [ ] File names match their content
-- [ ] No misleading or confusing names
-- [ ] Names follow TypeScript/JavaScript conventions
+---
+
+## Review Checklist
+
+- [ ] Names reveal intent — no abbreviations, no generics
+- [ ] Boolean variables/functions use `is`, `has`, `can` prefix
+- [ ] Functions use action verbs
+- [ ] Classes/types/interfaces are nouns (PascalCase)
+- [ ] Constants are UPPER_SNAKE_CASE
+- [ ] Files match their primary export
+- [ ] DB tables/columns follow snake_case convention
+- [ ] REST endpoints are nouns, plural, versioned
+- [ ] No underscore-prefixed private members in new TypeScript code

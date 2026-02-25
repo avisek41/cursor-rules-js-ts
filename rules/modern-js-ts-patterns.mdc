@@ -1,5 +1,5 @@
 ---
-description: Modern JavaScript/TypeScript patterns - async/await, optional chaining, destructuring, array methods
+description: Modern JavaScript/TypeScript patterns — async/await, optional chaining, destructuring, array methods, and ES2024+ features. Always active for all JS/TS projects.
 alwaysApply: true
 ---
 
@@ -9,47 +9,73 @@ Apply when writing JavaScript or TypeScript. Prefer modern, declarative syntax o
 
 ---
 
-## Async/Await Patterns
+## Async / Await
 
-- **Always use async/await** over raw promise chains (`.then()`/`.catch()`).
-- **Handle errors with try/catch** (or propagate to caller); never leave promise rejections unhandled.
-- **Avoid async inside `forEach`**—`forEach` does not wait for promises. Use `for...of` with await, or `Promise.all()` / `Promise.allSettled()`.
-- **Use `Promise.all()`** when you need all operations to succeed and can run them in parallel.
-- **Use `Promise.allSettled()`** when some failures are acceptable and you want all results (success or failure).
+- **Always use `async/await`** over raw promise chains (`.then()`/`.catch()`)
+- **Handle errors with `try/catch`** or propagate to caller — never leave rejections unhandled
+- **Never use `async` inside `forEach`** — it does not await. Use `for...of` or `Promise.all`
 
-```javascript
-// ✅ Good - for...of with await
+```typescript
+// ✅ Sequential — for...of with await
 for (const id of ids) {
   const item = await fetchItem(id);
   results.push(item);
 }
 
-// ✅ Good - parallel with Promise.all
+// ✅ Parallel (all must succeed)
 const results = await Promise.all(ids.map((id) => fetchItem(id)));
 
-// ✅ Good - parallel when some may fail
+// ✅ Parallel (some may fail — get all outcomes)
 const outcomes = await Promise.allSettled(ids.map((id) => fetchItem(id)));
+const successes = outcomes
+  .filter((o): o is PromiseFulfilledResult<Item> => o.status === 'fulfilled')
+  .map((o) => o.value);
 
-// ❌ Bad - forEach does not wait for async
+// ❌ forEach + async — fire-and-forget; caller never waits
 ids.forEach(async (id) => {
-  const item = await fetchItem(id); // fire-and-forget; caller won't wait
+  const item = await fetchItem(id); // not awaited by forEach
   results.push(item);
 });
+```
+
+### Cancellable Fetch — AbortController
+
+```typescript
+// ✅ Always support cancellation for long-running fetches (e.g. React effects)
+const controller = new AbortController();
+
+try {
+  const data = await fetch(url, { signal: controller.signal });
+  return await data.json();
+} catch (error) {
+  if (error instanceof DOMException && error.name === 'AbortError') return; // cancelled — not an error
+  throw error;
+}
+
+// Cancel: controller.abort();
+// In React useEffect: return () => controller.abort();
 ```
 
 ---
 
 ## Optional Chaining & Nullish Coalescing
 
-- Use **`?.`** (optional chaining) instead of nested `&&` checks for property access.
-- Use **`??`** (nullish coalescing) for default values when the value may be `null` or `undefined` (not when it may be `0`, `''`, or `false`—then use `||` if that's intended).
-
-```javascript
-// ✅ Good
+```typescript
+// ✅ Optional chaining — replaces nested && checks
 const userName = user?.profile?.name ?? 'Guest';
-const count = options?.limit ?? 10;
+const firstTag  = post?.tags?.[0] ?? 'uncategorized';
+const result    = obj?.method?.();
 
-// ❌ Bad - verbose and easy to get wrong
+// ✅ ?? for null/undefined defaults (not 0, '', false)
+const limit = options?.limit ?? 10;
+const label = config?.label ?? 'Default';
+
+// ✅ ||= / ??= / &&= — logical assignment
+user.role   ??= 'viewer';  // assign only if null/undefined
+config.name ||= 'default'; // assign if falsy
+obj.child   &&= transform(obj.child); // assign only if truthy
+
+// ❌ Verbose nested &&
 const userName = user && user.profile && user.profile.name || 'Guest';
 ```
 
@@ -57,35 +83,156 @@ const userName = user && user.profile && user.profile.name || 'Guest';
 
 ## Destructuring
 
-- **Use object destructuring** for function parameters (especially when there are several options).
-- **Use default values** in destructuring to simplify optional props.
-- **Rename** when the default name is unclear or clashes: `const { name: displayName } = user`.
-
-```javascript
-// ✅ Good - destructured params with defaults
-function createUser({ name, email, role = 'user' }) {
+```typescript
+// ✅ Object destructuring with defaults
+function createUser({ name, email, role = 'user' }: CreateUserParams) {
   return { name, email, role };
 }
 
-// ✅ Good - rename for clarity
-const { name: userName, email: userEmail } = user;
+// ✅ Rename for clarity on import
+const { name: displayName, id: userId } = user;
+
+// ✅ Array destructuring for tuples / useState
+const [count, setCount] = useState(0);
+const [first, ...rest]  = items;
+
+// ✅ Nested destructuring (max 2 levels — deeper = use intermediate variable)
+const { address: { city, country } } = user;
 ```
 
 ---
 
-## Array Methods
+## Array Methods — Declarative Over Imperative
 
-- **Prefer `map` / `filter` / `reduce`** over imperative `for` loops when you're transforming, filtering, or reducing an array.
-- **Use `some()` / `every()`** for boolean checks (e.g. "does any item match?" / "do all match?") instead of manual loops.
-- **Use `find()` / `findIndex()`** when you need one matching element—not `filter()[0]` (which is less clear and does extra work).
-
-```javascript
-// ✅ Good
-const names = users.map((u) => u.name);
-const active = users.filter((u) => u.isActive);
-const hasAdmin = users.some((u) => u.role === 'admin');
+```typescript
+// ✅ Prefer functional array methods over manual loops
+const names      = users.map((u) => u.name);
+const active     = users.filter((u) => u.isActive);
+const total      = items.reduce((sum, item) => sum + item.price, 0);
+const hasAdmin   = users.some((u) => u.role === 'admin');
+const allActive  = users.every((u) => u.isActive);
 const firstMatch = items.find((x) => x.id === targetId);
+const matchIndex = items.findIndex((x) => x.id === targetId);
 
-// ❌ Avoid - filter then [0]
+// ✅ Array.at() — negative indexing
+const last       = items.at(-1);          // replaces items[items.length - 1]
+const secondLast = items.at(-2);
+
+// ❌ filter then [0] — less clear, does extra work
 const firstMatch = items.filter((x) => x.id === targetId)[0];
 ```
+
+### `Object.groupBy` (ES2024)
+
+```typescript
+// ✅ Group array into object by key (replaces manual reduce-to-map patterns)
+const byRole = Object.groupBy(users, (u) => u.role);
+// { admin: [User, ...], viewer: [User, ...] }
+
+// Node 21+ / modern browsers; polyfill or use lodash groupBy for older targets
+```
+
+---
+
+## Spread, Rest, and Immutable Updates
+
+```typescript
+// ✅ Immutable object update
+const updated = { ...user, email: newEmail };
+
+// ✅ Merge defaults
+const config = { ...DEFAULT_CONFIG, ...userConfig };
+
+// ✅ Immutable array operations
+const added   = [...items, newItem];
+const removed = items.filter((i) => i.id !== targetId);
+const replaced = items.map((i) => (i.id === targetId ? { ...i, ...patch } : i));
+
+// ❌ Direct mutation — breaks React state, causes subtle bugs
+user.email = newEmail;
+items.push(newItem);
+```
+
+---
+
+## Deep Clone — `structuredClone`
+
+```typescript
+// ✅ Native deep clone — handles Date, Map, Set, ArrayBuffer, etc.
+const clone = structuredClone(complexObject);
+
+// ❌ JSON round-trip — loses Date, undefined, Map, Set, functions
+const clone = JSON.parse(JSON.stringify(obj));
+
+// ❌ Shallow spread — nested objects still share references
+const clone = { ...deeplyNestedObj };
+```
+
+---
+
+## Template Literals & Tagged Templates
+
+```typescript
+// ✅ Template literals over string concatenation
+const message = `Hello, ${user.name}! You have ${count} notifications.`;
+const endpoint = `${API_BASE_URL}/users/${userId}/orders`;
+
+// ✅ Multi-line strings
+const query = `
+  SELECT *
+  FROM users
+  WHERE active = true
+    AND role = 'admin'
+`;
+```
+
+---
+
+## Modules
+
+```typescript
+// ✅ Named exports — explicit, tree-shakable, refactorable
+export function getUserById(id: UserId): Promise<User> { /* */ }
+export type { User };
+
+// ✅ Barrel files (index.ts) ONLY for a module's public API
+// src/services/index.ts → re-exports public surface of /services
+// ❌ Never use barrels internally between files in the same module (causes circular deps)
+
+// ✅ import type for type-only imports (zero runtime cost)
+import type { User, UserId } from '@/types/user';
+
+// ❌ Default exports — hard to rename consistently, worse IDE support
+export default function doSomething() {} // avoid
+```
+
+---
+
+## Short-Circuit and Ternary — Use Sparingly
+
+```typescript
+// ✅ Short-circuit for conditional rendering / side effects
+isAuthenticated && renderDashboard();
+config.debug   && console.log('debug:', payload);
+
+// ✅ Ternary for simple inline value selection
+const label = isActive ? 'Active' : 'Inactive';
+
+// ❌ Nested ternaries — use if/else or early return instead
+const label = isActive ? 'Active' : isPending ? 'Pending' : 'Inactive'; // avoid
+```
+
+---
+
+## Summary Cheatsheet
+
+| Pattern | Prefer | Avoid |
+|---------|--------|-------|
+| Async | `async/await` + `Promise.all` | `.then()` chains, `async forEach` |
+| Nulls | `?.` + `??` | nested `&&`, `\|\|` for null checks |
+| Cloning | `structuredClone` | `JSON.parse/stringify`, shallow spread |
+| Arrays | `.find()`, `.at(-1)` | `.filter()[0]`, manual loops |
+| Grouping | `Object.groupBy` | manual `reduce` to map |
+| Updates | spread + map/filter | direct mutation |
+| Imports | named exports + `import type` | default exports, value imports of types |
+| Cancellation | `AbortController` | hanging fetches without cleanup |
