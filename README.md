@@ -16,6 +16,8 @@ npm install -D @avisek_yorkie/cursor-rules
 npx cursor-rules-init
 ```
 
+`npx cursor-rules-init` is the primary CLI output path and always shows setup progress in the terminal.
+
 This creates:
 
 - **`.cursorrules`** in your project root  
@@ -31,7 +33,7 @@ cp node_modules/@avisek_yorkie/cursor-rules/.cursorrules .
 cp node_modules/@avisek_yorkie/cursor-rules/rules/*.mdc .cursor/rules/
 ```
 
-**3. Verify:** Ensure `.cursorrules` exists and `.cursor/rules/` contains the three `.mdc` files. Restart Cursor if needed. You’re done.
+**3. Verify:** Ensure `.cursorrules` exists and `.cursor/rules/` contains the six `.mdc` files. Restart Cursor if needed. You’re done.
 
 **Resulting structure in your project:**
 
@@ -80,6 +82,8 @@ npm install -D @avisek_yorkie/cursor-rules
 ```bash
 npx cursor-rules-init
 ```
+
+This command always shows the setup banner and progress output.
 
 **Option B – Manual copy from node_modules:**
 ```bash

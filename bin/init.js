@@ -7,6 +7,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { version } = require('../package.json');
 
 const packageRoot = path.join(__dirname, '..');
 const targetDir = process.cwd();
@@ -22,6 +23,23 @@ const filesToCopy = [
   { src: 'rules/typescript-patterns.mdc', dest: '.cursor/rules/typescript-patterns.mdc' },
   { src: 'rules/modern-js-ts-patterns.mdc', dest: '.cursor/rules/modern-js-ts-patterns.mdc' },
 ];
+
+const showBanner = () => {
+  const lines = [
+    '',
+    `YORK Cursor Rules v${version}`,
+    '────────────────────────',
+    '',
+    '✔ Detecting project type (JS/TS)',
+    '✔ Validating environment',
+    '✔ Generating .cursor rules',
+    '✔ Applying YORK standards',
+    '',
+  ];
+  console.log(lines.join('\n'));
+};
+
+showBanner();
 
 if (!fs.existsSync(cursorRulesDir)) {
   fs.mkdirSync(cursorRulesDir, { recursive: true });
