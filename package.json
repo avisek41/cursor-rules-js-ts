@@ -1,6 +1,6 @@
 {
   "name": "@avisek_yorkie/cursor-rules",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Cursor AI rules for TS/JS (React, Angular, Node, React Native): code quality, docs, naming, AI-assisted development.",
   "keywords": [
     "cursor",
@@ -23,6 +23,9 @@
   },
   "bin": {
     "cursor-rules-init": "bin/init.js"
+  },
+  "scripts": {
+    "postinstall": "node bin/postinstall.js"
   },
   "files": [
     "bin",
